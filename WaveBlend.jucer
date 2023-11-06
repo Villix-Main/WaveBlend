@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="Villix">
   <MAINGROUP id="VUColu" name="WaveBlend">
     <GROUP id="{55F6F1F6-8F3B-0537-6DCC-8EC2AF2B3976}" name="Source">
+      <FILE id="IqiRQw" name="WaveBlendLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/WaveBlendLookAndFeel.cpp"/>
+      <FILE id="AzJcEr" name="WaveBlendLookAndFeel.h" compile="0" resource="0"
+            file="Source/WaveBlendLookAndFeel.h"/>
       <FILE id="QgWR6O" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="BuPGSI" name="PluginProcessor.h" compile="0" resource="0"
