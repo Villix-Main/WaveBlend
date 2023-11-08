@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="IU0EEO" name="WaveBlend" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="Villix">
+              addUsingNamespaceToJuceHeader="1" jucerFormatVersion="1" companyName="Villix"
+              includeBinaryInJuceHeader="1">
   <MAINGROUP id="VUColu" name="WaveBlend">
+    <GROUP id="{3BD44E6D-DA33-36C1-AD38-527D1113EBEE}" name="Assets">
+      <GROUP id="{A34B6CED-8833-BF68-8789-252224037839}" name="Fonts">
+        <FILE id="pIMPqp" name="segoeui.ttf" compile="0" resource="1" file="Assets/Fonts/segoeui.ttf"/>
+        <FILE id="GobfeC" name="segoeuib.ttf" compile="0" resource="1" file="Assets/Fonts/segoeuib.ttf"/>
+        <FILE id="ptZJiw" name="segoeuil.ttf" compile="0" resource="1" file="Assets/Fonts/segoeuil.ttf"/>
+        <FILE id="FPTRYf" name="segoeuisl.ttf" compile="0" resource="1" file="Assets/Fonts/segoeuisl.ttf"/>
+        <FILE id="BJKuR1" name="seguibl.ttf" compile="0" resource="1" file="Assets/Fonts/seguibl.ttf"/>
+        <FILE id="qDPvdj" name="seguisb.ttf" compile="0" resource="1" file="Assets/Fonts/seguisb.ttf"/>
+      </GROUP>
+    </GROUP>
     <GROUP id="{55F6F1F6-8F3B-0537-6DCC-8EC2AF2B3976}" name="Source">
+      <FILE id="fLL14j" name="WaveBlendColors.h" compile="0" resource="0"
+            file="Source/WaveBlendColors.h"/>
       <FILE id="IqiRQw" name="WaveBlendLookAndFeel.cpp" compile="1" resource="0"
             file="Source/WaveBlendLookAndFeel.cpp"/>
       <FILE id="AzJcEr" name="WaveBlendLookAndFeel.h" compile="0" resource="0"

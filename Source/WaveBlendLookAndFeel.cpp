@@ -31,7 +31,7 @@ void WaveBlendLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int
     g.setColour(juce::Colour(0xff707070));
     g.drawEllipse(rx, ry, rw, rw, 1.0f);
 
-
+    
     // Pointer
     juce::Path p;
     auto pointerLength = radius * 0.8;
@@ -43,3 +43,17 @@ void WaveBlendLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int
     g.setColour(juce::Colour(0xffC2C0C0));
     g.fillPath(p);
 }
+
+Font WaveBlendLookAndFeel::getLabelFont(Label& label)
+{
+    Font sliderTextBoxFont;
+    sliderTextBoxFont.setHeight(12);
+
+    if (dynamic_cast<Slider*>(label.getParentComponent()))
+        return sliderTextBoxFont;
+
+    return LookAndFeel_V4::getLabelFont(label);
+ 
+}
+
+
