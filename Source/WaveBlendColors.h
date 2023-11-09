@@ -11,10 +11,10 @@
 #pragma once
 
 
-enum WBColors
+namespace WBColors
 {
-    PrimaryGrey = 0xff495D6A,
-    SecondaryGrey = 0xff5B7586,
-    PrimaryLightGrey = 0xff8CA2B0,
-    SecondaryLightGrey = 0xff718C9E
+    const Colour PrimaryGrey{ 0xff495D6A };
+    const Colour SecondaryGrey{ 0xff5B7586 };
+    const Colour PrimaryLightGrey{ 0xff8CA2B0 };
+    const Colour SecondaryLightGrey{ 0xff718C9E };
 };

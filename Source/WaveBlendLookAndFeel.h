@@ -21,7 +21,20 @@ public:
         float sliderPosProportional, float rotaryStartAngle,
         float rotaryEndAngle, juce::Slider&) override;
 
-    
+
+    void drawButtonBackground(Graphics& g, Button& button, const Colour& backgroundColour,
+        bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+
+    void drawButtonText(Graphics& g, TextButton& button,
+        bool, bool) override;
+
+
+    void drawComboBox(Graphics&, int width, int height, bool isButtonDown,
+        int buttonX, int buttonY, int buttonW, int buttonH,
+        ComboBox&) override;
+
+    void positionComboBoxText(ComboBox&, Label&) override;
+
     Font getLabelFont(Label&) override;
 
 
@@ -42,5 +55,8 @@ public:
     }
 
 
+    void setButtonFontHeight(int fh);
+
 private:
+    int buttonFontHeight = 16;
 };

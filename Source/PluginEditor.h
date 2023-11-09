@@ -56,7 +56,7 @@ private:
     ComboBox pluginPresetMenu;
     
     // Add Module Button
-    TextButton AddModule;
+    TextButton addModule;
 
     
     

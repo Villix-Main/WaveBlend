@@ -51,13 +51,18 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProc
     
     // Plugin Preset Menu
     addAndMakeVisible(pluginPresetMenu);
+    pluginPresetMenu.setText("Presets");
     pluginPresetMenu.addItem("<Default>", 1);
     pluginPresetMenu.addItem("Drum Room", 2);
     pluginPresetMenu.addItem("Piano", 3);
     pluginPresetMenu.addItem("Clean Vocals", 4);
     pluginPresetMenu.addItem("Flute", 5);
- 
 
+    // Add Module Button
+    addAndMakeVisible(addModule);
+    lookAndFeel.setButtonFontHeight(40);
+    addModule.setButtonText("+");
+ 
     
 
     // Make sure that before the constructor has finished, you've set the
@@ -84,18 +89,32 @@ void WaveBlendAudioProcessorEditor::paint (juce::Graphics& g)
         false
     };
 
+
     titleFont.setHeight(22);
     titleFont.setBold(true);
+
+
+    DropShadow(Colour(0x6c323232),
+        11, { -4, 8 }).drawForRectangle(g, topBar);
+
 
     g.setGradientFill(rectGradient);
     g.drawRect(topBar, 1);
     g.fillRect(topBar);
 
+
+
     g.setColour(Colours::white);
     g.setFont(titleFont);
     g.drawFittedText("WaveBlend", topBar.reduced(50, 0), Justification::left, 1);
-    
-     
+
+    // The line between the add module buttons and the module knobs
+    Path moduleLine;
+    moduleLine.addRectangle(25.f, 190, 810, 1);
+
+    g.setColour(Colour(0xff5B7586));
+    g.fillPath(moduleLine);
+
 }
 
 void WaveBlendAudioProcessorEditor::resized()
@@ -109,5 +128,7 @@ void WaveBlendAudioProcessorEditor::resized()
 
     outputDbSlider.setBounds(742, 19, 53, 45);
     mixSlider.setBounds(785, 19, 53, 45);
+
+    addModule.setBounds(44, 86, 122, 87);
 
 }
