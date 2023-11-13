@@ -59,10 +59,11 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProc
     pluginPresetMenu.addItem("Flute", 5);
 
     // Add Module Button
-    addAndMakeVisible(addModule);
-    lookAndFeel.setButtonFontHeight(40);
-    addModule.setButtonText("+");
- 
+	/*addAndMakeVisible(addModule);
+	lookAndFeel.setButtonFontHeight(40);
+	addModule.setButtonText("+");*/
+    
+    addAndMakeVisible(moduleButtons);
     
 
     // Make sure that before the constructor has finished, you've set the
@@ -129,6 +130,7 @@ void WaveBlendAudioProcessorEditor::resized()
     outputDbSlider.setBounds(742, 19, 53, 45);
     mixSlider.setBounds(785, 19, 53, 45);
 
-    addModule.setBounds(44, 86, 122, 87);
+    //addModule.setBounds(44, 86, 122, 87);
+    moduleButtons.setBounds(44, 86, 122, 87);
 
 }

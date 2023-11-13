@@ -15,6 +15,12 @@
       </GROUP>
     </GROUP>
     <GROUP id="{55F6F1F6-8F3B-0537-6DCC-8EC2AF2B3976}" name="Source">
+      <GROUP id="{BF74DB54-9037-BF03-813B-222F4392524A}" name="Components">
+        <FILE id="O1WsnS" name="ModuleButtonsComponent.cpp" compile="1" resource="0"
+              file="Source/ModuleButtonsComponent.cpp"/>
+        <FILE id="nTfu6p" name="ModuleButtonsComponent.h" compile="0" resource="0"
+              file="Source/ModuleButtonsComponent.h"/>
+      </GROUP>
       <FILE id="fLL14j" name="WaveBlendColors.h" compile="0" resource="0"
             file="Source/WaveBlendColors.h"/>
       <FILE id="IqiRQw" name="WaveBlendLookAndFeel.cpp" compile="1" resource="0"

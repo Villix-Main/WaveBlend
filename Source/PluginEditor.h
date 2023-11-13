@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "WaveBlendLookAndFeel.h"
+#include "ModuleButtonsComponent.h"
+
 
 //==============================================================================
 /**
@@ -56,10 +58,9 @@ private:
     ComboBox pluginPresetMenu;
     
     // Add Module Button
-    TextButton addModule;
-
+	//TextButton addModule;
     
-    
+    ModuleButtonsComponent moduleButtons;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessorEditor)
