@@ -131,6 +131,6 @@ void WaveBlendAudioProcessorEditor::resized()
     mixSlider.setBounds(785, 19, 53, 45);
 
     //addModule.setBounds(44, 86, 122, 87);
-    moduleButtons.setBounds(44, 86, 122, 87);
+    moduleButtons.setBounds(44, 86, 500, 87);
 
 }

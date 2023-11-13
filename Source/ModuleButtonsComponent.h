@@ -29,5 +29,11 @@ public:
 private:
     WaveBlendLookAndFeel lookAndFeel;
 
-    TextButton addModuleButton;
+    std::unique_ptr<TextButton> addModuleButton;
+    std::vector<std::unique_ptr<TextButton>> moduleButtons;
+    
+    std::vector<std::string> moduleNames{ "Compressor", "Reverb", "Equalizer" };
+    std::vector<std::string> currentModules;
+
+    int addModuleButtonIndex = 0;
 };
