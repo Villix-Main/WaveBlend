@@ -16,13 +16,18 @@ ModuleButtonsComponent::ModuleButtonsComponent()
 {
     setLookAndFeel(&lookAndFeel);
 
-    addModuleButton = std::make_unique<TextButton>();
+    addModuleButton = std::make_unique<ModuleButton>();
 
     lookAndFeel.setButtonFontHeight(40);
     addModuleButton->setButtonText("+");
     addModuleButton->addListener(this);
 
     moduleButtons.push_back(std::move(addModuleButton));
+
+    addAndMakeVisible(test);
+    test.setButtonText("test");
+
+    test.addChangeListener(this);
 }
 
 
@@ -32,8 +37,9 @@ void ModuleButtonsComponent::resized()
     auto xPosition = bounds.getX();
     auto yPosition = bounds.getY();
 
-
+    
     //addModuleButton->setBounds(xPosition, yPosition, 122, 87);
+    //test.setBounds(xPosition, yPosition, 122, 87);
 
     for (int i = 0; i < moduleButtons.size(); i++)
     {
@@ -60,7 +66,7 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
 
         if (moduleButtons.size() < 3)
         {
-            auto newModuleButton = std::make_unique<TextButton>();
+            auto newModuleButton = std::make_unique<ModuleButton>();
             newModuleButton->setButtonText("+");
             newModuleButton->addListener(this);
             moduleButtons.push_back(std::move(newModuleButton));
@@ -80,9 +86,13 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
             if (button == moduleButtons[i].get())
             {
                 auto currentModuleName = moduleNames[addModuleButtonIndex];
-
                 button->setButtonText(currentModuleName);
             }
         }
     }
+}
+
+void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
+{
+    
 }

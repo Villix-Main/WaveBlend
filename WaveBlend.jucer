@@ -16,10 +16,17 @@
     </GROUP>
     <GROUP id="{55F6F1F6-8F3B-0537-6DCC-8EC2AF2B3976}" name="Source">
       <GROUP id="{BF74DB54-9037-BF03-813B-222F4392524A}" name="Components">
+        <FILE id="hdS95B" name="ModuleButton.cpp" compile="1" resource="0"
+              file="Source/ModuleButton.cpp"/>
+        <FILE id="JxzGY9" name="ModuleButton.h" compile="0" resource="0" file="Source/ModuleButton.h"/>
         <FILE id="O1WsnS" name="ModuleButtonsComponent.cpp" compile="1" resource="0"
               file="Source/ModuleButtonsComponent.cpp"/>
         <FILE id="nTfu6p" name="ModuleButtonsComponent.h" compile="0" resource="0"
               file="Source/ModuleButtonsComponent.h"/>
+        <FILE id="mEShw5" name="RemoveModuleLabel.cpp" compile="1" resource="0"
+              file="Source/RemoveModuleLabel.cpp"/>
+        <FILE id="MHvG9q" name="RemoveModuleLabel.h" compile="0" resource="0"
+              file="Source/RemoveModuleLabel.h"/>
       </GROUP>
       <FILE id="fLL14j" name="WaveBlendColors.h" compile="0" resource="0"
             file="Source/WaveBlendColors.h"/>
