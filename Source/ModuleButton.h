@@ -17,7 +17,7 @@ class ModuleButton : public TextButton,
     public ChangeBroadcaster
 {
 public:
-    ModuleButton();
+    ModuleButton(bool isAddModuleButton = false);
 
     void resized() override;
 
@@ -25,10 +25,11 @@ public:
     void mouseDown(const MouseEvent&) override;
     //void mouseEnter(const MouseEvent&) override;
 
-    bool getShouldRemoveButton();
-
+    bool getToBeRemoved();
+    
 
 private:
     Label removeLabel;
-    bool shouldRemoveButton = false;
+    bool toBeRemoved = false;
+    bool isAddModuleButton = false;
 };

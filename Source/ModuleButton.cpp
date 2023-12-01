@@ -11,13 +11,18 @@
 #include "ModuleButton.h"
 
 
-ModuleButton::ModuleButton()
+ModuleButton::ModuleButton(bool isAddModuleButton) :
+    isAddModuleButton(isAddModuleButton)
 {
+    if (isAddModuleButton)
+        return;
+
     Font lFont;
     lFont.setHeight(20);
     
     addAndMakeVisible(removeLabel);
     removeLabel.setFont(lFont);
+
 
     removeLabel.setText("x", dontSendNotification);
     removeLabel.addMouseListener(this, false);
@@ -39,8 +44,8 @@ void ModuleButton::mouseDown(const MouseEvent& e)
 {
     if (dynamic_cast<Label*>(e.eventComponent))
     {
+        toBeRemoved = true;
         sendChangeMessage();
-
     }
 }
 
@@ -53,7 +58,7 @@ void ModuleButton::mouseDown(const MouseEvent& e)
 //    }
 //}
 
-bool ModuleButton::getShouldRemoveButton()
+bool ModuleButton::getToBeRemoved()
 {
-    return shouldRemoveButton;
+    return this->toBeRemoved;
 }

@@ -16,8 +16,7 @@ ModuleButtonsComponent::ModuleButtonsComponent()
 {
     setLookAndFeel(&lookAndFeel);
 
-    addModuleButton = std::make_unique<ModuleButton>();
-
+    addModuleButton = std::make_unique<ModuleButton>(false);
     lookAndFeel.setButtonFontHeight(40);
     addModuleButton->setButtonText("+");
     addModuleButton->addListener(this);
@@ -26,7 +25,7 @@ ModuleButtonsComponent::ModuleButtonsComponent()
 
     addAndMakeVisible(test);
     test.setButtonText("test");
-
+    
     test.addChangeListener(this);
 }
 
@@ -46,6 +45,7 @@ void ModuleButtonsComponent::resized()
         addAndMakeVisible(*moduleButtons[i]);
 
         auto margin = 20 * i;
+           
 
         moduleButtons[i]->setBounds(xPosition + margin + (i * 122), yPosition, 122, 87);
 
@@ -61,6 +61,7 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
 	{
         lookAndFeel.setButtonFontHeight(16);
         moduleButtons[addModuleButtonIndex]->setButtonText(moduleNames[addModuleButtonIndex]);
+        moduleButtons[addModuleButtonIndex]->addChangeListener(this);
         currentModules.push_back(moduleNames[addModuleButtonIndex]);
 
 
@@ -94,5 +95,20 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
 
 void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 {
-    
+    for (int i = 0; i < moduleButtons.size(); i++)
+    {
+        if (moduleButtons[i]->getToBeRemoved())
+        {
+            moduleButtons[i].reset();
+            moduleButtons.erase(moduleButtons.begin() + i);
+            addModuleButtonIndex--;
+
+            if (moduleButtons.size() <= 0)
+            {
+
+            }
+
+            resized();
+        }
+    }
 }
