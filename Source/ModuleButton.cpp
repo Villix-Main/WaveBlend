@@ -14,12 +14,20 @@
 ModuleButton::ModuleButton(bool isAddModuleButton) :
     isAddModuleButton(isAddModuleButton)
 {
+    // if button is the add module button, dont draw remove label
+    // But draw it otherwise
     if (isAddModuleButton)
         return;
 
+    drawRemoveLabel();
+}
+
+
+void ModuleButton::drawRemoveLabel()
+{
     Font lFont;
     lFont.setHeight(20);
-    
+
     addAndMakeVisible(removeLabel);
     removeLabel.setFont(lFont);
 
@@ -42,8 +50,11 @@ void ModuleButton::resized()
 
 void ModuleButton::mouseDown(const MouseEvent& e)
 {
+    // if mouse down event is triggered, check if the component that was clicked a label
     if (dynamic_cast<Label*>(e.eventComponent))
     {
+        // If it was a label, set toBeRemovexd flag to true and send a change message to parent component
+        // So this module button can be removed
         toBeRemoved = true;
         sendChangeMessage();
     }

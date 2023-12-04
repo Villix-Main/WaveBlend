@@ -16,19 +16,29 @@ ModuleButtonsComponent::ModuleButtonsComponent()
 {
     setLookAndFeel(&lookAndFeel);
 
-    addModuleButton = std::make_unique<ModuleButton>(false);
-    lookAndFeel.setButtonFontHeight(40);
+    drawAddModuleButton();
+
+
+    //addAndMakeVisible(test);
+    //test.setButtonText("test");
+    //
+    //test.addChangeListener(this);
+}
+
+void ModuleButtonsComponent::drawAddModuleButton()
+{
+    if (addModuleButtonIsDrawn)
+        return;
+
+    auto addModuleButton = std::make_unique<ModuleButton>(true);
+    //lookAndFeel.setButtonFontHeight(40);
     addModuleButton->setButtonText("+");
     addModuleButton->addListener(this);
 
     moduleButtons.push_back(std::move(addModuleButton));
 
-    addAndMakeVisible(test);
-    test.setButtonText("test");
-    
-    test.addChangeListener(this);
+    addModuleButtonIsDrawn = true;
 }
-
 
 void ModuleButtonsComponent::resized()
 {
@@ -54,20 +64,21 @@ void ModuleButtonsComponent::resized()
 }
 
 
-// Make a new custom button class that contains a property for current module name and also a x button to remove module
 void ModuleButtonsComponent::buttonClicked(Button* button)
 {
 	if (button == moduleButtons[addModuleButtonIndex].get())
-	{
+	{ 
         lookAndFeel.setButtonFontHeight(16);
+
         moduleButtons[addModuleButtonIndex]->setButtonText(moduleNames[addModuleButtonIndex]);
         moduleButtons[addModuleButtonIndex]->addChangeListener(this);
+        moduleButtons[addModuleButtonIndex]->drawRemoveLabel();
         currentModules.push_back(moduleNames[addModuleButtonIndex]);
-
+        moduleCount++;
 
         if (moduleButtons.size() < 3)
         {
-            auto newModuleButton = std::make_unique<ModuleButton>();
+            auto newModuleButton = std::make_unique<ModuleButton>(true);
             newModuleButton->setButtonText("+");
             newModuleButton->addListener(this);
             moduleButtons.push_back(std::move(newModuleButton));
@@ -99,14 +110,22 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
     {
         if (moduleButtons[i]->getToBeRemoved())
         {
+            if (moduleCount >= 3)
+                addModuleButtonIsDrawn = false;
+            else
+                addModuleButtonIndex--;
+
             moduleButtons[i].reset();
             moduleButtons.erase(moduleButtons.begin() + i);
-            addModuleButtonIndex--;
-
+            moduleCount--;
+           
             if (moduleButtons.size() <= 0)
             {
+                addModuleButtonIsDrawn = false;
+                addModuleButtonIndex = 0;
 
             }
+            drawAddModuleButton();  
 
             resized();
         }
