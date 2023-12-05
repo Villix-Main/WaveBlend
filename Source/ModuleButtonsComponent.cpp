@@ -90,16 +90,25 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
     }
     else
     {
+        button->setButtonText("test");
         if (moduleButtons.size() >= 3)
             return;
-
-        for (int i = 0; i < moduleButtons.size(); i++)
+        
+        for (int i = 0; i < moduleNames.size(); i++)
         {
-            if (button == moduleButtons[i].get())
+            bool moduleExists;
+
+            for (int j = 0; i < currentModules.size(); i++)
             {
-                auto currentModuleName = moduleNames[addModuleButtonIndex];
-                button->setButtonText(currentModuleName);
+                if (moduleNames[i] == currentModules[j])
+                    moduleExists = true;
             }
+
+            if (moduleExists)
+                continue;
+
+            button->setButtonText(moduleNames[i]);
+            break;
         }
     }
 }
@@ -119,10 +128,11 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             moduleButtons.erase(moduleButtons.begin() + i);
             moduleCount--;
            
-            if (moduleButtons.size() <= 0)
+            if (moduleCount <= 0)
             {
-                addModuleButtonIsDrawn = false;
                 addModuleButtonIndex = 0;
+                moduleButtons.clear();
+                addModuleButtonIsDrawn = false;
 
             }
             drawAddModuleButton();  
