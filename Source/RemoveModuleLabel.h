@@ -14,16 +14,14 @@
 
 
 class RemoveModuleLabel : public Label,
-    public MouseListener
+    public MouseListener,
+    public ChangeBroadcaster
 {
 public:
-    RemoveModuleLabel(int moduleButtonId);
+    RemoveModuleLabel();
 
 
     void mouseDown(const MouseEvent&) override;
     void mouseEnter(const MouseEvent&) override;
     void mouseExit(const MouseEvent&) override;
-
-private:
-    int moduleButtonId;
 };

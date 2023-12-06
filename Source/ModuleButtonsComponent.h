@@ -43,9 +43,13 @@ private:
     bool addModuleButtonIsDrawn = false;
     
     // List of module names in plugin
-    std::vector<std::string> moduleNames{ "Compressor", "Reverb", "Equalizer" };
-    std::vector<std::string> currentModules;
+    std::vector<String> moduleNames;
+    std::vector<String> currentModules;
+    String previousModule;
     int moduleCount = 0;
 
     int addModuleButtonIndex = 0;
+
+    bool existsInCurrentModules(String mod);
+    void removeFromCurrentModules(String mod);
 };

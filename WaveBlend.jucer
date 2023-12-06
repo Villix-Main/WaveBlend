@@ -27,6 +27,9 @@
               file="Source/RemoveModuleLabel.cpp"/>
         <FILE id="MHvG9q" name="RemoveModuleLabel.h" compile="0" resource="0"
               file="Source/RemoveModuleLabel.h"/>
+        <FILE id="CzdAkw" name="ReverbModule.cpp" compile="1" resource="0"
+              file="Source/ReverbModule.cpp"/>
+        <FILE id="XuV7c3" name="ReverbModule.h" compile="0" resource="0" file="Source/ReverbModule.h"/>
       </GROUP>
       <FILE id="fLL14j" name="WaveBlendColors.h" compile="0" resource="0"
             file="Source/WaveBlendColors.h"/>

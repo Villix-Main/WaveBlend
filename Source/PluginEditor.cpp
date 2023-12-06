@@ -22,7 +22,7 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProc
 
     // Output Db Slider
     addAndMakeVisible(outputDbSlider);
-    outputDbSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    outputDbSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     outputDbSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
     outputDbSlider.setRange(-15.0f, 0.f);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
@@ -36,7 +36,7 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProc
 
     // Mix Slider
     addAndMakeVisible(mixSlider);
-    mixSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    mixSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     mixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
     mixSlider.setRange(0, 100);
     //mixSliderAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "mix", mixSlider));

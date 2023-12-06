@@ -11,10 +11,12 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "RemoveModuleLabel.h"
 
 class ModuleButton : public TextButton,
     public MouseListener,
-    public ChangeBroadcaster
+    public ChangeBroadcaster,
+    public ChangeListener
 {
 public:
     ModuleButton(bool isAddModuleButton = false);
@@ -24,9 +26,11 @@ public:
 
     void resized() override;
 
+    void changeListenerCallback(ChangeBroadcaster* source);
+
     // Event method is called when module button or label is clicked
     // But this method will only perform when the remove label is clicked
-    void mouseDown(const MouseEvent&) override;
+    //void mouseDown(const MouseEvent&) override;
     //void mouseEnter(const MouseEvent&) override;
 
     // Getter function for 'toBeRemoved' field
@@ -35,7 +39,8 @@ public:
 
 private:
     // Label that will be used to remove a module button from UI
-    Label removeLabel;
+    //Label removeLabel;
+    RemoveModuleLabel removeLabel;
 
     // Sets a module button flag to be removed.
     // Parent component will use this flag to determine if module needs to be removed

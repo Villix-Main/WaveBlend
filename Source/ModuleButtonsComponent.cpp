@@ -16,13 +16,13 @@ ModuleButtonsComponent::ModuleButtonsComponent()
 {
     setLookAndFeel(&lookAndFeel);
 
+    addModuleButtonIsDrawn = false;
+    moduleNames = { "Compressor", "Reverb", "Equalizer" };
+    currentModules = {};
+    moduleCount = 0;
+    addModuleButtonIndex = 0;
+
     drawAddModuleButton();
-
-
-    //addAndMakeVisible(test);
-    //test.setButtonText("test");
-    //
-    //test.addChangeListener(this);
 }
 
 void ModuleButtonsComponent::drawAddModuleButton()
@@ -46,10 +46,6 @@ void ModuleButtonsComponent::resized()
     auto xPosition = bounds.getX();
     auto yPosition = bounds.getY();
 
-    
-    //addModuleButton->setBounds(xPosition, yPosition, 122, 87);
-    //test.setBounds(xPosition, yPosition, 122, 87);
-
     for (int i = 0; i < moduleButtons.size(); i++)
     {
         addAndMakeVisible(*moduleButtons[i]);
@@ -58,22 +54,32 @@ void ModuleButtonsComponent::resized()
            
 
         moduleButtons[i]->setBounds(xPosition + margin + (i * 122), yPosition, 122, 87);
-
-
     }
 }
 
 
 void ModuleButtonsComponent::buttonClicked(Button* button)
 {
-	if (button == moduleButtons[addModuleButtonIndex].get())
+	if (button == moduleButtons[addModuleButtonIndex].get() && moduleCount < 3)
 	{ 
         lookAndFeel.setButtonFontHeight(16);
 
-        moduleButtons[addModuleButtonIndex]->setButtonText(moduleNames[addModuleButtonIndex]);
+        String newModule;
+        for (int i = 0; i < moduleNames.size(); i++)
+        {
+            if (!existsInCurrentModules(moduleNames[i]))
+            {
+                newModule = moduleNames[i];
+                break;
+            }
+            else
+                continue;
+        }
+
+        moduleButtons[addModuleButtonIndex]->setButtonText(newModule);
         moduleButtons[addModuleButtonIndex]->addChangeListener(this);
         moduleButtons[addModuleButtonIndex]->drawRemoveLabel();
-        currentModules.push_back(moduleNames[addModuleButtonIndex]);
+        currentModules.push_back(newModule);
         moduleCount++;
 
         if (moduleButtons.size() < 3)
@@ -90,24 +96,26 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
     }
     else
     {
-        button->setButtonText("test");
-        if (moduleButtons.size() >= 3)
+        if (moduleCount >= 3)
             return;
         
         for (int i = 0; i < moduleNames.size(); i++)
         {
-            bool moduleExists;
+            bool moduleExists = false;
 
-            for (int j = 0; i < currentModules.size(); i++)
-            {
-                if (moduleNames[i] == currentModules[j])
-                    moduleExists = true;
-            }
+            moduleExists = existsInCurrentModules(moduleNames[i]);
 
-            if (moduleExists)
+            if (moduleExists || (moduleNames[i] == previousModule && moduleCount < 2))
                 continue;
 
+            auto currentModule = button->getButtonText();
+            previousModule = currentModule;
             button->setButtonText(moduleNames[i]);
+            
+            removeFromCurrentModules(currentModule);
+            
+            currentModules.push_back(moduleNames[i]);
+            
             break;
         }
     }
@@ -124,6 +132,7 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             else
                 addModuleButtonIndex--;
 
+            removeFromCurrentModules(moduleButtons[i]->getButtonText());
             moduleButtons[i].reset();
             moduleButtons.erase(moduleButtons.begin() + i);
             moduleCount--;
@@ -139,5 +148,25 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 
             resized();
         }
+    }
+}
+
+bool ModuleButtonsComponent::existsInCurrentModules(String mod)
+{
+    for (int i = 0; i < currentModules.size(); i++)
+    {
+        if (currentModules[i] == mod)
+            return true;
+    }
+
+    return false;
+}
+
+void ModuleButtonsComponent::removeFromCurrentModules(String mod)
+{
+    for (int i = 0; i < currentModules.size(); i++)
+    {
+        if (currentModules[i] == mod)
+            currentModules.erase(currentModules.begin() + i);
     }
 }

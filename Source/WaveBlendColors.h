@@ -17,4 +17,5 @@ namespace WBColors
     const Colour SecondaryGrey{ 0xff5B7586 };
     const Colour PrimaryLightGrey{ 0xff8CA2B0 };
     const Colour SecondaryLightGrey{ 0xff718C9E };
+    const Colour MoreLightGrey{ 0xffC2C0C0 };
 };
