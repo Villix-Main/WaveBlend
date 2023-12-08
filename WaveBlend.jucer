@@ -15,7 +15,24 @@
       </GROUP>
     </GROUP>
     <GROUP id="{55F6F1F6-8F3B-0537-6DCC-8EC2AF2B3976}" name="Source">
+      <FILE id="PL5ZSM" name="Modules.h" compile="0" resource="0" file="Source/Modules.h"/>
+      <FILE id="JcTQQl" name="ModuleManager.cpp" compile="1" resource="0"
+            file="Source/ModuleManager.cpp"/>
+      <FILE id="yu2gHo" name="ModuleManager.h" compile="0" resource="0" file="Source/ModuleManager.h"/>
       <GROUP id="{BF74DB54-9037-BF03-813B-222F4392524A}" name="Components">
+        <GROUP id="{C7512383-8D09-2279-57B5-2386D5915828}" name="Modules">
+          <FILE id="QxnLz3" name="CompressorModule.cpp" compile="1" resource="0"
+                file="Source/CompressorModule.cpp"/>
+          <FILE id="YPAYCx" name="CompressorModule.h" compile="0" resource="0"
+                file="Source/CompressorModule.h"/>
+          <FILE id="SD5xa0" name="EqualizerModule.cpp" compile="1" resource="0"
+                file="Source/EqualizerModule.cpp"/>
+          <FILE id="r6xGSm" name="EqualizerModule.h" compile="0" resource="0"
+                file="Source/EqualizerModule.h"/>
+          <FILE id="CzdAkw" name="ReverbModule.cpp" compile="1" resource="0"
+                file="Source/ReverbModule.cpp"/>
+          <FILE id="XuV7c3" name="ReverbModule.h" compile="0" resource="0" file="Source/ReverbModule.h"/>
+        </GROUP>
         <FILE id="hdS95B" name="ModuleButton.cpp" compile="1" resource="0"
               file="Source/ModuleButton.cpp"/>
         <FILE id="JxzGY9" name="ModuleButton.h" compile="0" resource="0" file="Source/ModuleButton.h"/>
@@ -23,13 +40,11 @@
               file="Source/ModuleButtonsComponent.cpp"/>
         <FILE id="nTfu6p" name="ModuleButtonsComponent.h" compile="0" resource="0"
               file="Source/ModuleButtonsComponent.h"/>
+        <FILE id="guoev2" name="ModuleSlider.h" compile="0" resource="0" file="Source/ModuleSlider.h"/>
         <FILE id="mEShw5" name="RemoveModuleLabel.cpp" compile="1" resource="0"
               file="Source/RemoveModuleLabel.cpp"/>
         <FILE id="MHvG9q" name="RemoveModuleLabel.h" compile="0" resource="0"
               file="Source/RemoveModuleLabel.h"/>
-        <FILE id="CzdAkw" name="ReverbModule.cpp" compile="1" resource="0"
-              file="Source/ReverbModule.cpp"/>
-        <FILE id="XuV7c3" name="ReverbModule.h" compile="0" resource="0" file="Source/ReverbModule.h"/>
       </GROUP>
       <FILE id="fLL14j" name="WaveBlendColors.h" compile="0" resource="0"
             file="Source/WaveBlendColors.h"/>
