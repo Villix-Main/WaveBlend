@@ -12,12 +12,14 @@
 #include "PluginProcessor.h"
 #include "WaveBlendLookAndFeel.h"
 #include "ModuleButtonsComponent.h"
+#include "ReverbModule.h"
 
 
 //==============================================================================
 /**
 */
-class WaveBlendAudioProcessorEditor  : public juce::AudioProcessorEditor
+class WaveBlendAudioProcessorEditor  : public juce::AudioProcessorEditor,
+    public ChangeListener
 {
 public:
     WaveBlendAudioProcessorEditor (WaveBlendAudioProcessor&);
@@ -26,6 +28,9 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    void changeListenerCallback(ChangeBroadcaster* source);
+
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -62,6 +67,6 @@ private:
     
     ModuleButtonsComponent moduleButtons;
 
-
+    ReverbModule rm;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessorEditor)
 };

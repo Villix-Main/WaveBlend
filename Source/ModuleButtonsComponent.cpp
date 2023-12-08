@@ -90,7 +90,9 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
             moduleButtons.push_back(std::move(newModuleButton));
             addModuleButtonIndex++;
         }
-        
+
+        moduleToRender = newModule;
+        sendChangeMessage();
         
         resized();
     }
@@ -115,7 +117,8 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
             removeFromCurrentModules(currentModule);
             
             currentModules.push_back(moduleNames[i]);
-            
+            moduleToRender = moduleNames[i];
+
             break;
         }
     }
@@ -149,6 +152,11 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             resized();
         }
     }
+}
+
+String ModuleButtonsComponent::getModuleToRender()
+{
+    return this->moduleToRender;
 }
 
 bool ModuleButtonsComponent::existsInCurrentModules(String mod)

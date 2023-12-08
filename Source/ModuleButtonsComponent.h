@@ -17,7 +17,8 @@
 
 class ModuleButtonsComponent : public juce::Component,
     public juce::Button::Listener,
-    public ChangeListener
+    public ChangeListener,
+    public ChangeBroadcaster
 {
 public:
     ModuleButtonsComponent();
@@ -34,6 +35,9 @@ public:
     // Listener method that will be called when module button remove label is called
     void changeListenerCallback(ChangeBroadcaster* source);
 
+
+    String getModuleToRender();
+
 private:
     WaveBlendLookAndFeel lookAndFeel;
 
@@ -45,6 +49,7 @@ private:
     // List of module names in plugin
     std::vector<String> moduleNames;
     std::vector<String> currentModules;
+    String moduleToRender;
     String previousModule;
     int moduleCount = 0;
 

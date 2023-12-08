@@ -10,106 +10,59 @@
 
 #include "ReverbModule.h"
  
-class ModuleSlider :
-    public Slider
+
+
+ReverbModule::ReverbModule() :
+    decaySlider("Decay", 0.2, 10),
+    predelaySlider("Predelay", 0, 500),
+    distanceSlider("Distance", 0, 100),
+    widthSlider("Width", 0, 100),
+    lowCutSlider("Low Cut", 20, 2000),
+    highCutSlider("High Cut", 200, 20000),
+    mixSlider("Mix", 0, 100)
 {
-public:
-    ModuleSlider(String labelText, float minVal, float maxVal, int fontSize = 15) :
-        labelText(labelText), minVal(minVal), maxVal(maxVal)
-    {
-        Font f;
-        f.setHeight(fontSize);
-
-        this->setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-        this->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-        this->setRange(minVal, maxVal);
-
-        // Slider Label
-        addAndMakeVisible(sliderLabel);
-        sliderLabel.setFont(f);
-        sliderLabel.setText("Output", dontSendNotification);
-        sliderLabel.setJustificationType(Justification::centred);
-        sliderLabel.attachToComponent(this, false);
-    }
-
-private:
-    String labelText;
-    Label sliderLabel;
-    float minVal;
-    float maxVal;
-};
-
-
-ReverbModule::ReverbModule()
-{
-    const auto bounds = this->getLocalBounds();
-
     f.setHeight(15);
 
     // Decay Slider
     addAndMakeVisible(decaySlider);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
-    
-    
-
 
     // Predelay Slider
     addAndMakeVisible(predelaySlider);
-    predelaySlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    predelaySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-    predelaySlider.setRange(-15.0f, 0.f);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
-    // Decay Label
-    addAndMakeVisible(predelayLabel);
-    predelayLabel.setFont(f);
-    predelayLabel.setText("Output", dontSendNotification);
-    predelayLabel.setJustificationType(Justification::centred);
-    predelayLabel.attachToComponent(&predelaySlider, false);
 
     // Distance Slider
     addAndMakeVisible(distanceSlider);
-    distanceSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    distanceSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-    distanceSlider.setRange(-15.0f, 0.f);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
-    // Decay Label
-    addAndMakeVisible(distanceLabel);
-    distanceLabel.setFont(f);
-    distanceLabel.setText("Output", dontSendNotification);
-    distanceLabel.setJustificationType(Justification::centred);
-    distanceLabel.attachToComponent(&distanceSlider, false);
 
-    // Distance Slider
-    addAndMakeVisible(distanceSlider);
-    distanceSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    distanceSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-    distanceSlider.setRange(-15.0f, 0.f);
+    // Width Slider
+    addAndMakeVisible(widthSlider);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
-    // Decay Label
-    addAndMakeVisible(distanceLabel);
-    distanceLabel.setFont(f);
-    distanceLabel.setText("Output", dontSendNotification);
-    distanceLabel.setJustificationType(Justification::centred);
-    distanceLabel.attachToComponent(&distanceSlider, false);
 
-    // Distance Slider
-    addAndMakeVisible(distanceSlider);
-    distanceSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    distanceSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-    distanceSlider.setRange(-15.0f, 0.f);
+    // Low Cut Slider
+    addAndMakeVisible(lowCutSlider);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
-    // Decay Label
-    addAndMakeVisible(distanceLabel);
-    distanceLabel.setFont(f);
-    distanceLabel.setText("Output", dontSendNotification);
-    distanceLabel.setJustificationType(Justification::centred);
-    distanceLabel.attachToComponent(&distanceSlider, false);
+   
+    // High Cut Slider
+    addAndMakeVisible(highCutSlider);
+    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
 
+    // Mix Slider
+    addAndMakeVisible(mixSlider);
+    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
 }
 
 void ReverbModule::resized()
 {
-   
+    const auto bounds = this->getLocalBounds();
 
+    
+    decaySlider.setBounds(61, 40, 85, 115);
+    predelaySlider.setBounds(61, 197, 85, 115);
+    distanceSlider.setBounds(240, 40, 85, 115);
+    widthSlider.setBounds(240, 197, 85, 115);
+    lowCutSlider.setBounds(390, 78, 55, 85);
+    highCutSlider.setBounds(478, 78, 55, 85);
 
+    mixSlider.setBounds(620, 40, 85, 115);
 }

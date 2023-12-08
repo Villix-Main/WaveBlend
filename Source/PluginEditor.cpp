@@ -58,12 +58,15 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProc
     pluginPresetMenu.addItem("Clean Vocals", 4);
     pluginPresetMenu.addItem("Flute", 5);
 
+    addAndMakeVisible(rm);
+
     // Add Module Button
 	/*addAndMakeVisible(addModule);
 	lookAndFeel.setButtonFontHeight(40);
 	addModule.setButtonText("+");*/
     
     addAndMakeVisible(moduleButtons);
+    moduleButtons.addChangeListener(this);
     
 
     // Make sure that before the constructor has finished, you've set the
@@ -115,7 +118,6 @@ void WaveBlendAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour(Colour(0xff5B7586));
     g.fillPath(moduleLine);
-
 }
 
 void WaveBlendAudioProcessorEditor::resized()
@@ -123,14 +125,29 @@ void WaveBlendAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
-    topBar = getLocalBounds().removeFromTop(69);
+    auto bounds = getLocalBounds();
+
+    topBar = bounds.removeFromTop(69);
 
     pluginPresetMenu.setBounds(253, 20, 197, 30);
-
+   
     outputDbSlider.setBounds(742, 19, 53, 45);
     mixSlider.setBounds(785, 19, 53, 45);
 
     //addModule.setBounds(44, 86, 122, 87);
     moduleButtons.setBounds(44, 86, 500, 87);
 
+    //rm.setBounds(0, 190, bounds.getWidth(), 370);
+
+}
+
+void WaveBlendAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source)
+{
+    auto moduleToDraw = moduleButtons.getModuleToDraw();
+
+    if (moduleToDraw == "Reverb")
+    {
+        addAndMakeVisible(rm);
+        rm.setBounds(0, 190, getLocalBounds().getWidth(), 370);
+    }
 }

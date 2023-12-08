@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ModuleSlider.h"
 
 class ReverbModule : public Component
 {
@@ -23,38 +24,30 @@ private:
     Font f;
 
     // Decay Slider
-    Slider decaySlider;
+    ModuleSlider decaySlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> decayAttachment;
-    Label decayLabel;
 
     // Predelay Slider
-    Slider predelaySlider;
+    ModuleSlider predelaySlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> predelayAttachment;
-    Label predelayLabel;
 
     // Distance Slider
-    Slider distanceSlider;
+    ModuleSlider distanceSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> distanceAttachment;
-    Label distanceLabel;
 
     // Stereo Width Slider
-    Slider widthSlider;
+    ModuleSlider widthSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> widthAttachment;
-    Label widthLabel;
 
     // Low Cut Slider
-    Slider lowCutSlider;
+    ModuleSlider lowCutSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lowCutAttachment;
-    Label lowCutDbLabel;
 
     // High Cut Slider
-    Slider highCutSlider;
+    ModuleSlider highCutSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> highCutAttachment;
-    Label highCutLabel;
 
     // Mix Slider
-    Slider mixSlider;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mixAttachment;
-    Label mixLabel;
-                                    
+    ModuleSlider mixSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mixAttachment;                          
 };
