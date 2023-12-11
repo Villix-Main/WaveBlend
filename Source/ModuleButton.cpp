@@ -38,15 +38,20 @@ void ModuleButton::drawRemoveLabel()
 
     removeLabel.addChangeListener(this);
     addAndMakeVisible(removeLabel);
+
+    switchLabel.addChangeListener(this);
+    addAndMakeVisible(switchLabel);
 }
 
 
 void ModuleButton::resized()
 {
     auto bounds = getLocalBounds();
-    Rectangle<int> rect(bounds.getX() + 90, bounds.getY(), 30, 30);
-    removeLabel.setBounds(rect);
+    Rectangle<int> removeLabelRect(bounds.getX() + 90, bounds.getY(), 30, 30);
+    Rectangle<int> switchLabelRect(bounds.getX() + 5, bounds.getY(), 30, 30);
 
+    removeLabel.setBounds(removeLabelRect);
+    switchLabel.setBounds(switchLabelRect);
 
     removeLabel.setJustificationType(Justification::centred);
     
@@ -54,13 +59,16 @@ void ModuleButton::resized()
 
 void ModuleButton::changeListenerCallback(ChangeBroadcaster* source)
 {
-    toBeRemoved = true;
+    if (dynamic_cast<RemoveModuleLabel*>(source))
+        buttonAction = ModuleButtonAction::Remove;
+    else if (dynamic_cast<SwitchModuleLabel*>(source))
+        buttonAction = ModuleButtonAction::Switch;
+
     sendChangeMessage();
 }
 
-
-
-bool ModuleButton::getToBeRemoved()
+ModuleButtonAction ModuleButton::getButtonAction()
 {
-    return this->toBeRemoved;
+    return this->buttonAction;
 }
+

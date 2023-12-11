@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 #include "RemoveModuleLabel.h"
+#include "SwitchModuleLabel.h"
+#include "Modules.h"
 
 class ModuleButton : public TextButton,
     public MouseListener,
@@ -34,13 +36,21 @@ public:
     //void mouseEnter(const MouseEvent&) override;
 
     // Getter function for 'toBeRemoved' field
-    bool getToBeRemoved();
+    //bool getToBeRemoved();
+
+    ModuleButtonAction getButtonAction();
     
 
 private:
     // Label that will be used to remove a module button from UI
     //Label removeLabel;
     RemoveModuleLabel removeLabel;
+
+    // Label that will be used to switch the module that a module button has
+    SwitchModuleLabel switchLabel;
+
+    // Enum to determine the action of the button labels
+    ModuleButtonAction buttonAction;
 
     // Sets a module button flag to be removed.
     // Parent component will use this flag to determine if module needs to be removed

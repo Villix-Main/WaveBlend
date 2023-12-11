@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "WaveBlendLookAndFeel.h"
 #include "ModuleButton.h"
+#include "Modules.h"
 
 
 class ModuleButtonsComponent : public juce::Component,
@@ -37,6 +38,7 @@ public:
 
 
     String getModuleToRender();
+    ModuleButtonAction getButtonAction();
 
 private:
     WaveBlendLookAndFeel lookAndFeel;
@@ -44,6 +46,7 @@ private:
     ModuleButton test;
 
     std::vector<std::unique_ptr<ModuleButton>> moduleButtons;
+    Button* currentButton = nullptr;
     bool addModuleButtonIsDrawn = false;
     
     // List of module names in plugin
@@ -54,6 +57,8 @@ private:
     int moduleCount = 0;
 
     int addModuleButtonIndex = 0;
+
+    ModuleButtonAction buttonAction;
 
     bool existsInCurrentModules(String mod);
     void removeFromCurrentModules(String mod);

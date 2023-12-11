@@ -58,7 +58,9 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProc
     pluginPresetMenu.addItem("Clean Vocals", 4);
     pluginPresetMenu.addItem("Flute", 5);
 
-    addAndMakeVisible(rm);
+    addAndMakeVisible(moduleManager);
+
+    //addAndMakeVisible(rm);
 
     // Add Module Button
 	/*addAndMakeVisible(addModule);
@@ -137,17 +139,29 @@ void WaveBlendAudioProcessorEditor::resized()
     //addModule.setBounds(44, 86, 122, 87);
     moduleButtons.setBounds(44, 86, 500, 87);
 
+    moduleManager.setBounds(0, 190, bounds.getWidth(), 370);
+
     //rm.setBounds(0, 190, bounds.getWidth(), 370);
 
 }
 
 void WaveBlendAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source)
 {
-    auto moduleToDraw = moduleButtons.getModuleToDraw();
+    auto moduleToDraw = moduleButtons.getModuleToRender();
+    auto buttonAction = moduleButtons.getButtonAction();
 
-    if (moduleToDraw == "Reverb")
+    switch (buttonAction)
     {
-        addAndMakeVisible(rm);
-        rm.setBounds(0, 190, getLocalBounds().getWidth(), 370);
+    case ModuleButtonAction::Add:
+        moduleManager.SetAndRenderModule(moduleToDraw);
+        break;
+    case ModuleButtonAction::Switch:
+        moduleManager.SetAndRenderModule(moduleToDraw);
+        break;
+    case ModuleButtonAction::Remove:
+        moduleManager.RemoveCurrentModule();
+
     }
+
+    moduleManager.SetAndRenderModule(moduleToDraw);
 }

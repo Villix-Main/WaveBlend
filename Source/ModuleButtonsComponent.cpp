@@ -11,13 +11,12 @@
 #include "ModuleButtonsComponent.h"
 
 
-
 ModuleButtonsComponent::ModuleButtonsComponent()
 {
     setLookAndFeel(&lookAndFeel);
 
     addModuleButtonIsDrawn = false;
-    moduleNames = { "Compressor", "Reverb", "Equalizer" };
+    moduleNames = { Modules::Reverb, Modules::Compressor, Modules::Equalizer };
     currentModules = {};
     moduleCount = 0;
     addModuleButtonIndex = 0;
@@ -92,35 +91,14 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
         }
 
         moduleToRender = newModule;
+        buttonAction = ModuleButtonAction::Add;
         sendChangeMessage();
         
         resized();
     }
     else
     {
-        if (moduleCount >= 3)
-            return;
         
-        for (int i = 0; i < moduleNames.size(); i++)
-        {
-            bool moduleExists = false;
-
-            moduleExists = existsInCurrentModules(moduleNames[i]);
-
-            if (moduleExists || (moduleNames[i] == previousModule && moduleCount < 2))
-                continue;
-
-            auto currentModule = button->getButtonText();
-            previousModule = currentModule;
-            button->setButtonText(moduleNames[i]);
-            
-            removeFromCurrentModules(currentModule);
-            
-            currentModules.push_back(moduleNames[i]);
-            moduleToRender = moduleNames[i];
-
-            break;
-        }
     }
 }
 
@@ -128,7 +106,9 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 {
     for (int i = 0; i < moduleButtons.size(); i++)
     {
-        if (moduleButtons[i]->getToBeRemoved())
+        ModuleButtonAction ba = moduleButtons[i]->getButtonAction();
+
+        if (ba == ModuleButtonAction::Remove)
         {
             if (moduleCount >= 3)
                 addModuleButtonIsDrawn = false;
@@ -149,7 +129,45 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             }
             drawAddModuleButton();  
 
+            moduleToRender = previousModule;
+            buttonAction = ModuleButtonAction::Remove;
+            sendChangeMessage();
+
             resized();
+        } 
+        else if (ba == ModuleButtonAction::Switch)
+        {
+            if (moduleCount >= 3)
+                return;
+
+            for (int i = 0; i < moduleNames.size(); i++)
+            {
+                bool moduleExists = false;
+
+                moduleExists = existsInCurrentModules(moduleNames[i]);
+
+                if (moduleExists || (moduleNames[i] == previousModule && moduleCount < 2))
+                    continue;
+
+                auto currentModule = moduleButtons[i]->getButtonText();
+                previousModule = currentModule;
+                moduleButtons[i]->setButtonText(moduleNames[i]);
+
+                removeFromCurrentModules(currentModule);
+
+                currentModules.push_back(moduleNames[i]);
+                 set previous button to previous index of that button!!!
+                if (currentButton != nullptr)
+                    currentButton->setAlpha(1.0);
+                moduleButtons[i]->setAlpha(0.8);
+                currentButton = moduleButtons[i];
+
+                moduleToRender = moduleNames[i];
+                buttonAction = ModuleButtonAction::Switch;
+                sendChangeMessage();
+
+                break;
+            }
         }
     }
 }
@@ -157,6 +175,10 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 String ModuleButtonsComponent::getModuleToRender()
 {
     return this->moduleToRender;
+}
+ModuleButtonAction ModuleButtonsComponent::getButtonAction()
+{
+    return this->buttonAction;
 }
 
 bool ModuleButtonsComponent::existsInCurrentModules(String mod)

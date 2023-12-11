@@ -12,23 +12,28 @@
 #include <JuceHeader.h>
 #include "Modules.h"
 
-class ModuleManager
+class ModuleManager : public Component
 {
 public:
-    ModuleManager(Rectangle<int> bounds);
+    ModuleManager();
 
-    void AddModule(Modules mod);
+    void RenderModule();
 
-    void RenderModule(Modules mod);
+    void RemoveCurrentModule();
 
-    void RemoveAndUnrenderModule(Modules mod);
+    void SetAndRenderModule(String module);
 
-    void SetCurrentModule(Modules module);
-    Modules GetCurrentModule(Modules modules);
+    String GetCurrentModule(String modules);
 
 private:
-    std::vector<Modules> modules;
-    Modules currentModule;
+    std::vector<String> modules;
+
+    std::unique_ptr<Component> currentModule;
+
+    String currentModuleName;
+    String previousModuleName;
 
     Rectangle<int> moduleBounds;
+
+    void setCurrentModule(String mod);
 };

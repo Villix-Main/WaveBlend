@@ -45,6 +45,10 @@
               file="Source/RemoveModuleLabel.cpp"/>
         <FILE id="MHvG9q" name="RemoveModuleLabel.h" compile="0" resource="0"
               file="Source/RemoveModuleLabel.h"/>
+        <FILE id="goWbfv" name="SwitchModuleLabel.cpp" compile="1" resource="0"
+              file="Source/SwitchModuleLabel.cpp"/>
+        <FILE id="FYlJud" name="SwitchModuleLabel.h" compile="0" resource="0"
+              file="Source/SwitchModuleLabel.h"/>
       </GROUP>
       <FILE id="fLL14j" name="WaveBlendColors.h" compile="0" resource="0"
             file="Source/WaveBlendColors.h"/>

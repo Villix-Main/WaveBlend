@@ -10,9 +10,17 @@
 
 #pragma once
 
-enum Modules
+namespace Modules
 {
-    Reverb,
-    Compressor,
-    Equalizer
+    const String Reverb{ "Reverb" };
+    const String Compressor{ "Compressor" };
+    const String Equalizer{ "Equalizer" };
+    const String None { "None" };
+}
+
+enum ModuleButtonAction
+{
+    Add,
+    Switch,
+    Remove
 };
