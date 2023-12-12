@@ -21,6 +21,8 @@ public:
 
     void RemoveCurrentModule();
 
+    void RemoveAndDontRender();
+
     void SetAndRenderModule(String module);
 
     String GetCurrentModule(String modules);

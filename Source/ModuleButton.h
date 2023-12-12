@@ -39,6 +39,7 @@ public:
     //bool getToBeRemoved();
 
     ModuleButtonAction getButtonAction();
+    void setButtonAction(ModuleButtonAction action);
     
 
 private:

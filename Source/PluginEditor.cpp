@@ -147,21 +147,24 @@ void WaveBlendAudioProcessorEditor::resized()
 
 void WaveBlendAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source)
 {
-    auto moduleToDraw = moduleButtons.getModuleToRender();
+    auto moduleToRender= moduleButtons.getModuleToRender();
     auto buttonAction = moduleButtons.getButtonAction();
 
     switch (buttonAction)
     {
     case ModuleButtonAction::Add:
-        moduleManager.SetAndRenderModule(moduleToDraw);
+        moduleManager.SetAndRenderModule(moduleToRender);
         break;
     case ModuleButtonAction::Switch:
-        moduleManager.SetAndRenderModule(moduleToDraw);
+        moduleManager.SetAndRenderModule(moduleToRender);
         break;
     case ModuleButtonAction::Remove:
         moduleManager.RemoveCurrentModule();
+        break;
+    case ModuleButtonAction::None:
+        moduleManager.RemoveAndDontRender();
+        break;
 
     }
 
-    moduleManager.SetAndRenderModule(moduleToDraw);
 }

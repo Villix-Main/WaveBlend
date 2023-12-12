@@ -81,6 +81,8 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
         currentModules.push_back(newModule);
         moduleCount++;
 
+        focusOnButton(addModuleButtonIndex);
+
         if (moduleButtons.size() < 3)
         {
             auto newModuleButton = std::make_unique<ModuleButton>(true);
@@ -98,7 +100,18 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
     }
     else
     {
-        
+        for (int i = 0; i < moduleButtons.size(); i++)
+        {
+            if (button == moduleButtons[i].get())
+            {
+                moduleToRender = moduleButtons[i]->getButtonText();
+
+                focusOnButton(i);
+
+                buttonAction = ModuleButtonAction::Switch;
+                sendChangeMessage();
+            }
+        }
     }
 }
 
@@ -123,14 +136,18 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             if (moduleCount <= 0)
             {
                 addModuleButtonIndex = 0;
+                currentButtonIndex = -1;
                 moduleButtons.clear();
                 addModuleButtonIsDrawn = false;
 
+                buttonAction = ModuleButtonAction::None;
             }
+            else
+                buttonAction = ModuleButtonAction::Remove;
+
             drawAddModuleButton();  
 
             moduleToRender = previousModule;
-            buttonAction = ModuleButtonAction::Remove;
             sendChangeMessage();
 
             resized();
@@ -140,29 +157,27 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             if (moduleCount >= 3)
                 return;
 
-            for (int i = 0; i < moduleNames.size(); i++)
+            for (int j = 0; j < moduleNames.size(); j++)
             {
                 bool moduleExists = false;
 
-                moduleExists = existsInCurrentModules(moduleNames[i]);
+                moduleExists = existsInCurrentModules(moduleNames[j]);
 
-                if (moduleExists || (moduleNames[i] == previousModule && moduleCount < 2))
+                if (moduleExists || (moduleNames[j] == previousModule && moduleCount < 2))
                     continue;
 
                 auto currentModule = moduleButtons[i]->getButtonText();
                 previousModule = currentModule;
-                moduleButtons[i]->setButtonText(moduleNames[i]);
+                moduleButtons[i]->setButtonText(moduleNames[j]);
 
                 removeFromCurrentModules(currentModule);
 
-                currentModules.push_back(moduleNames[i]);
-                 set previous button to previous index of that button!!!
-                if (currentButton != nullptr)
-                    currentButton->setAlpha(1.0);
-                moduleButtons[i]->setAlpha(0.8);
-                currentButton = moduleButtons[i];
+                currentModules.push_back(moduleNames[j]);
+                
+                focusOnButton(i);
 
-                moduleToRender = moduleNames[i];
+                moduleButtons[i]->setButtonAction(ModuleButtonAction::None);
+                moduleToRender = moduleNames[j];
                 buttonAction = ModuleButtonAction::Switch;
                 sendChangeMessage();
 
@@ -179,6 +194,14 @@ String ModuleButtonsComponent::getModuleToRender()
 ModuleButtonAction ModuleButtonsComponent::getButtonAction()
 {
     return this->buttonAction;
+}
+
+void ModuleButtonsComponent::focusOnButton(int index)
+{
+    if (currentButtonIndex != -1)
+        moduleButtons[currentButtonIndex]->setAlpha(1.0);
+    moduleButtons[index]->setAlpha(0.7);
+    currentButtonIndex = index;
 }
 
 bool ModuleButtonsComponent::existsInCurrentModules(String mod)
@@ -200,3 +223,4 @@ void ModuleButtonsComponent::removeFromCurrentModules(String mod)
             currentModules.erase(currentModules.begin() + i);
     }
 }
+

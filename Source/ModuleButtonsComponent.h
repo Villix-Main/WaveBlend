@@ -46,7 +46,7 @@ private:
     ModuleButton test;
 
     std::vector<std::unique_ptr<ModuleButton>> moduleButtons;
-    Button* currentButton = nullptr;
+    int currentButtonIndex = -1;
     bool addModuleButtonIsDrawn = false;
     
     // List of module names in plugin
@@ -59,6 +59,8 @@ private:
     int addModuleButtonIndex = 0;
 
     ModuleButtonAction buttonAction;
+
+    void focusOnButton(int index);
 
     bool existsInCurrentModules(String mod);
     void removeFromCurrentModules(String mod);

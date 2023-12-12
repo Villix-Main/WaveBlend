@@ -45,6 +45,11 @@ void ModuleManager::RemoveCurrentModule()
     RenderModule();
 }
 
+void ModuleManager::RemoveAndDontRender()
+{
+    currentModule.reset();
+}
+
 String ModuleManager::GetCurrentModule(String modules)
 {
     return currentModuleName;

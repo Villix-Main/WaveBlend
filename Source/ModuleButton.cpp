@@ -72,3 +72,8 @@ ModuleButtonAction ModuleButton::getButtonAction()
     return this->buttonAction;
 }
 
+void ModuleButton::setButtonAction(ModuleButtonAction action)
+{
+    this->buttonAction = action;
+}
+

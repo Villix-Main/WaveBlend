@@ -22,5 +22,6 @@ enum ModuleButtonAction
 {
     Add,
     Switch,
-    Remove
+    Remove,
+    None
 };
