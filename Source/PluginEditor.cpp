@@ -159,7 +159,7 @@ void WaveBlendAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* so
         moduleManager.SetAndRenderModule(moduleToRender);
         break;
     case ModuleButtonAction::Remove:
-        moduleManager.RemoveCurrentModule();
+        moduleManager.SetAndRenderModule(moduleToRender);
         break;
     case ModuleButtonAction::None:
         moduleManager.RemoveAndDontRender();

@@ -38,7 +38,7 @@ private:
     ModuleSlider releaseSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
 
-    // Sidechain label
+    // Sidechain EQ label
     Label sidechainLabel;
 
     // Sidechain Low Cut Slider

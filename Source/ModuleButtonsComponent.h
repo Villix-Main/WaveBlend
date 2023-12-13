@@ -16,6 +16,13 @@
 #include "Modules.h"
 
 
+struct ModuleButtonData
+{
+    int index = -1;
+    String moduleName;
+};
+
+
 class ModuleButtonsComponent : public juce::Component,
     public juce::Button::Listener,
     public ChangeListener,
@@ -46,21 +53,23 @@ private:
     ModuleButton test;
 
     std::vector<std::unique_ptr<ModuleButton>> moduleButtons;
-    int currentButtonIndex = -1;
     bool addModuleButtonIsDrawn = false;
     
     // List of module names in plugin
     std::vector<String> moduleNames;
     std::vector<String> currentModules;
-    String moduleToRender;
-    String previousModule;
     int moduleCount = 0;
+    String moduleToRender;
+
+    ModuleButtonData currentModule;
+    ModuleButtonData previousModule;
+    //String previousModule;
 
     int addModuleButtonIndex = 0;
 
     ModuleButtonAction buttonAction;
 
-    void focusOnButton(int index);
+    void focusOnButton(int index, String modName);
 
     bool existsInCurrentModules(String mod);
     void removeFromCurrentModules(String mod);

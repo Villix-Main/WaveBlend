@@ -39,6 +39,9 @@ private:
     ModuleSlider widthSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> widthAttachment;
 
+    // EQ Label
+    Label eqLabel;
+
     // Low Cut Slider
     ModuleSlider lowCutSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lowCutAttachment;

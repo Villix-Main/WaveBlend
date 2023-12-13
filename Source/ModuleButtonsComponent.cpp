@@ -11,6 +11,7 @@
 #include "ModuleButtonsComponent.h"
 
 
+
 ModuleButtonsComponent::ModuleButtonsComponent()
 {
     setLookAndFeel(&lookAndFeel);
@@ -20,6 +21,7 @@ ModuleButtonsComponent::ModuleButtonsComponent()
     currentModules = {};
     moduleCount = 0;
     addModuleButtonIndex = 0;
+    currentModule.index = -1;
 
     drawAddModuleButton();
 }
@@ -77,11 +79,17 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
 
         moduleButtons[addModuleButtonIndex]->setButtonText(newModule);
         moduleButtons[addModuleButtonIndex]->addChangeListener(this);
-        moduleButtons[addModuleButtonIndex]->drawRemoveLabel();
+        moduleButtons[addModuleButtonIndex]->drawLabels();
         currentModules.push_back(newModule);
         moduleCount++;
 
-        focusOnButton(addModuleButtonIndex);
+        if (moduleCount > 1)
+        {
+            previousModule.index = addModuleButtonIndex - 1;
+            previousModule.moduleName = moduleButtons[addModuleButtonIndex - 1]->getButtonText();
+        }
+        
+        focusOnButton(addModuleButtonIndex, newModule);
 
         if (moduleButtons.size() < 3)
         {
@@ -106,7 +114,7 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
             {
                 moduleToRender = moduleButtons[i]->getButtonText();
 
-                focusOnButton(i);
+                focusOnButton(i, moduleButtons[i]->getButtonText());
 
                 buttonAction = ModuleButtonAction::Switch;
                 sendChangeMessage();
@@ -128,28 +136,53 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             else
                 addModuleButtonIndex--;
 
-            removeFromCurrentModules(moduleButtons[i]->getButtonText());
-            moduleButtons[i].reset();
-            moduleButtons.erase(moduleButtons.begin() + i);
+
             moduleCount--;
            
             if (moduleCount <= 0)
             {
-                addModuleButtonIndex = 0;
-                currentButtonIndex = -1;
-                moduleButtons.clear();
-                addModuleButtonIsDrawn = false;
-
                 buttonAction = ModuleButtonAction::None;
             }
             else
                 buttonAction = ModuleButtonAction::Remove;
+             
+            if (moduleButtons[i]->getButtonText() == currentModule.moduleName)
+            {
+                moduleToRender = moduleButtons[previousModule.index]->getButtonText();
+                focusOnButton(previousModule.index, previousModule.moduleName);
+                int priorIndex = currentModule.index;
+                currentModule = previousModule;
 
+                int leftOrRight = 1;
+                if (priorIndex == 0)
+                    leftOrRight = -1;
+
+                previousModule.index = moduleCount > 1 ? previousModule.index - (1 * leftOrRight) : 0;
+                previousModule.moduleName = moduleButtons[previousModule.index]->getButtonText();
+                
+
+                sendChangeMessage();
+            }
+
+            removeFromCurrentModules(moduleButtons[i]->getButtonText());
+            moduleButtons[i].reset();
+            moduleButtons.erase(moduleButtons.begin() + i);
+            
+            if (buttonAction == ModuleButtonAction::None)
+            {
+                addModuleButtonIndex = 0;
+                addModuleButtonIsDrawn = false;
+
+                moduleButtons.clear();
+                currentModule.index = -1;
+            }
+
+            
             drawAddModuleButton();  
 
-            moduleToRender = previousModule;
-            sendChangeMessage();
 
+
+            
             resized();
         } 
         else if (ba == ModuleButtonAction::Switch)
@@ -163,18 +196,19 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 
                 moduleExists = existsInCurrentModules(moduleNames[j]);
 
-                if (moduleExists || (moduleNames[j] == previousModule && moduleCount < 2))
+                if (moduleExists || (moduleNames[j] == previousModule.moduleName && moduleCount < 2))
                     continue;
 
                 auto currentModule = moduleButtons[i]->getButtonText();
-                previousModule = currentModule;
+                previousModule.moduleName = currentModule;
+                previousModule.index = i;
                 moduleButtons[i]->setButtonText(moduleNames[j]);
 
                 removeFromCurrentModules(currentModule);
 
                 currentModules.push_back(moduleNames[j]);
                 
-                focusOnButton(i);
+                focusOnButton(i, moduleNames[j]);
 
                 moduleButtons[i]->setButtonAction(ModuleButtonAction::None);
                 moduleToRender = moduleNames[j];
@@ -196,12 +230,13 @@ ModuleButtonAction ModuleButtonsComponent::getButtonAction()
     return this->buttonAction;
 }
 
-void ModuleButtonsComponent::focusOnButton(int index)
+void ModuleButtonsComponent::focusOnButton(int index, String name)
 {
-    if (currentButtonIndex != -1)
-        moduleButtons[currentButtonIndex]->setAlpha(1.0);
+    if (currentModule.index != -1)
+        moduleButtons[currentModule.index]->setAlpha(1.0);
     moduleButtons[index]->setAlpha(0.7);
-    currentButtonIndex = index;
+    currentModule.index = index;
+    currentModule.moduleName = name;
 }
 
 bool ModuleButtonsComponent::existsInCurrentModules(String mod)

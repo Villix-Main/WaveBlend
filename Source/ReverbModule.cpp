@@ -39,6 +39,12 @@ ReverbModule::ReverbModule() :
     addAndMakeVisible(widthSlider);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
 
+    // EQ Label
+    addAndMakeVisible(eqLabel);
+    eqLabel.setFont(f);
+    eqLabel.setJustificationType(Justification::centred);
+    eqLabel.setText("EQ", NotificationType::dontSendNotification);
+
     // Low Cut Slider
     addAndMakeVisible(lowCutSlider);
     //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
@@ -61,6 +67,8 @@ void ReverbModule::resized()
     predelaySlider.setBounds(61, 197, 85, 115);
     distanceSlider.setBounds(240, 40, 85, 115);
     widthSlider.setBounds(240, 197, 85, 115);
+
+    eqLabel.setBounds(390, 20, 143, 20);
     lowCutSlider.setBounds(390, 78, 55, 85);
     highCutSlider.setBounds(478, 78, 55, 85);
 

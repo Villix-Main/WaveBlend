@@ -23,8 +23,8 @@ class ModuleButton : public TextButton,
 public:
     ModuleButton(bool isAddModuleButton = false);
     
-    // Draws a label on button that will be used to remove a module button from UI
-    void drawRemoveLabel();
+    // Draws labels on buttons that will be used to perform different actions
+    void drawLabels();
 
     void resized() override;
 

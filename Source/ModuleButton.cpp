@@ -20,11 +20,11 @@ ModuleButton::ModuleButton(bool isAddModuleButton) :
         return;
 
 
-    drawRemoveLabel();
+    drawLabels();
 }
 
 
-void ModuleButton::drawRemoveLabel()
+void ModuleButton::drawLabels()
 {
     //Font lFont;
     //lFont.setHeight(20);

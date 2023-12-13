@@ -41,6 +41,9 @@ CompressorModule::CompressorModule() :
 
     // Sidechain Label
     addAndMakeVisible(sidechainLabel);
+    sidechainLabel.setFont(f);
+    sidechainLabel.setJustificationType(Justification::centred);
+    sidechainLabel.setText("Sidechain", NotificationType::dontSendNotification);
 
     // Sidechain Low Cut Slider
     addAndMakeVisible(sidechainLowCutSlider);
@@ -68,6 +71,8 @@ void CompressorModule::resized()
     ratioSlider.setBounds(61, 197, 85, 115);
     attackSlider.setBounds(240, 40, 85, 115);
     releaseSlider.setBounds(240, 197, 85, 115);
+
+    sidechainLabel.setBounds(390, 20, 143, 20);
     sidechainLowCutSlider.setBounds(390, 78, 55, 85);
     sidechainHighCutSlider.setBounds(478, 78, 55, 85);
 
