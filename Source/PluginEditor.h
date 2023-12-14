@@ -23,7 +23,7 @@ class WaveBlendAudioProcessorEditor  : public juce::AudioProcessorEditor,
     public ChangeListener
 {
 public:
-    WaveBlendAudioProcessorEditor (WaveBlendAudioProcessor&);
+    WaveBlendAudioProcessorEditor (WaveBlendAudioProcessor&, AudioProcessorValueTreeState& vts);
     ~WaveBlendAudioProcessorEditor() override;
 
     //==============================================================================

@@ -54,6 +54,17 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    AudioProcessorValueTreeState parameters;
+    
+    // Reverb Module Parameters
+    std::atomic<float>* decayParamater = nullptr;
+    std::atomic<float>* predelayParamater = nullptr;
+    std::atomic<float>* distanceParamater = nullptr;
+    std::atomic<float>* widthParamater = nullptr;
+    std::atomic<float>* lowCutParamater = nullptr;
+    std::atomic<float>* highCutParamater = nullptr;
+    std::atomic<float>* reverbMixParamater = nullptr;
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessor)

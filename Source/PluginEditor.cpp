@@ -12,7 +12,7 @@
 
 
 //==============================================================================
-WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProcessor& p)
+WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProcessor& p, AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Set Look And Feel of plugin

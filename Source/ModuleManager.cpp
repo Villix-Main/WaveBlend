@@ -14,9 +14,11 @@
 #include "EqualizerModule.h"
 
 
-ModuleManager::ModuleManager() :
-    currentModuleName(Modules::None), previousModuleName(Modules::None)
+ModuleManager::ModuleManager(AudioProcessorValueTreeState& vts) :
+    currentModuleName(Modules::None), previousModuleName(Modules::None),
+    vts(vts)
 {
+    
 }
 
 void ModuleManager::SetAndRenderModule(String mod)
@@ -62,7 +64,7 @@ void ModuleManager::setCurrentModule(String mod)
     
 
     if (mod == Modules::Reverb)
-        currentModule = std::make_unique<ReverbModule>();
+        currentModule = std::make_unique<ReverbModule>(vts);
     else if (mod == Modules::Compressor)
         currentModule = std::make_unique<CompressorModule>();
     else if (mod == Modules::Equalizer)

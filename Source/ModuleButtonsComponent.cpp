@@ -148,17 +148,21 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
              
             if (moduleButtons[i]->getButtonText() == currentModule.moduleName)
             {
-                moduleToRender = moduleButtons[previousModule.index]->getButtonText();
-                focusOnButton(previousModule.index, previousModule.moduleName);
-                int priorIndex = currentModule.index;
-                currentModule = previousModule;
+                if (buttonAction != ModuleButtonAction::None)
+                {
+                    int leftOrRight = 1;
+                    if (i == 0)
+                        leftOrRight = -1;
+                    currentModule.index = moduleCount >= 1 ? i - (1 * leftOrRight) : 0;
+                    currentModule.moduleName = moduleButtons[currentModule.index]->getButtonText();
 
-                int leftOrRight = 1;
-                if (priorIndex == 0)
-                    leftOrRight = -1;
+                    moduleToRender = currentModule.moduleName;
+                    int priorIndex = currentModule.index;
+                    focusOnButton(currentModule.index, currentModule.moduleName);
+                    //currentModule = previousModule;
 
-                previousModule.index = moduleCount > 1 ? previousModule.index - (1 * leftOrRight) : 0;
-                previousModule.moduleName = moduleButtons[previousModule.index]->getButtonText();
+
+                }
                 
 
                 sendChangeMessage();
@@ -232,9 +236,11 @@ ModuleButtonAction ModuleButtonsComponent::getButtonAction()
 
 void ModuleButtonsComponent::focusOnButton(int index, String name)
 {
-    if (currentModule.index != -1)
-        moduleButtons[currentModule.index]->setAlpha(1.0);
+    for (int i = 0; i < moduleButtons.size(); i++)
+        moduleButtons[i]->setAlpha(1.0);
+
     moduleButtons[index]->setAlpha(0.7);
+    previousModule = currentModule;
     currentModule.index = index;
     currentModule.moduleName = name;
 }

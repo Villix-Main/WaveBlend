@@ -12,7 +12,7 @@
  
 
 
-ReverbModule::ReverbModule() :
+ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
     decaySlider("Decay", 0.2, 10),
     predelaySlider("Predelay", 0, 500),
     distanceSlider("Distance", 0, 100),
@@ -25,19 +25,19 @@ ReverbModule::ReverbModule() :
 
     // Decay Slider
     addAndMakeVisible(decaySlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    decayAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "decay", decaySlider));
 
     // Predelay Slider
     addAndMakeVisible(predelaySlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    predelayAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "predelay", predelaySlider));
 
     // Distance Slider
     addAndMakeVisible(distanceSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    distanceAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "distance", distanceSlider));
 
     // Width Slider
     addAndMakeVisible(widthSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    widthAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "width", widthSlider));
 
     // EQ Label
     addAndMakeVisible(eqLabel);
@@ -47,15 +47,15 @@ ReverbModule::ReverbModule() :
 
     // Low Cut Slider
     addAndMakeVisible(lowCutSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    lowCutAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "low_cut", lowCutSlider));
    
     // High Cut Slider
     addAndMakeVisible(highCutSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    highCutAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "high_cut", highCutSlider));
 
     // Mix Slider
     addAndMakeVisible(mixSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    mixAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "slider", mixSlider));
 }
 
 void ReverbModule::resized()

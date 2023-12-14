@@ -19,8 +19,17 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+#else
+    :
 #endif
+    parameters(*this, nullptr, Identifier("WaveBlend"),
+        {
+            std::make_unique<AudioParameterFloat>("decay", "Decay",
+            NormalisableRange{0.2f, 10.f, 0.05f}, 2.f),
+            std::make_unique<AudioParameterFloat>("predelay", "Predelay",
+            NormalisableRange(0.f, 500.f, 1.f)
+        })
 {
 }
 
@@ -166,7 +175,7 @@ bool WaveBlendAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* WaveBlendAudioProcessor::createEditor()
 {
-    return new WaveBlendAudioProcessorEditor (*this);
+    return new WaveBlendAudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================

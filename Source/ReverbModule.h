@@ -16,7 +16,7 @@
 class ReverbModule : public Component
 {
 public:
-    ReverbModule();
+    ReverbModule(AudioProcessorValueTreeState& vts);
 
     void resized() override;
 private:

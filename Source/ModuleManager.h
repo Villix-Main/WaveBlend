@@ -15,7 +15,7 @@
 class ModuleManager : public Component
 {
 public:
-    ModuleManager();
+    ModuleManager(AudioProcessorValueTreeState& vts);
 
     void RenderModule();
 
@@ -36,6 +36,8 @@ private:
     String previousModuleName;
 
     Rectangle<int> moduleBounds;
+    
+    AudioProcessorValueTreeState& vts;
 
     void setCurrentModule(String mod);
 };
