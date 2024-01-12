@@ -79,6 +79,12 @@ private:
     std::atomic<float>* equalizerMixParameter = nullptr;
     std::atomic<float>* equalizerOutputParameter = nullptr;
 
+    AudioSampleBuffer wBuffer;
+
+    Reverb reverbL;
+    Reverb reverbR;
+    Reverb::Parameters reverbLParameters;
+    Reverb::Parameters reverbRParameters;
 
 
     //==============================================================================

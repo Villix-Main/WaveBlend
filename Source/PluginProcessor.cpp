@@ -163,6 +163,9 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+
+    reverbL.setSampleRate(sampleRate);
+    reverbR.setSampleRate(sampleRate);
 }
 
 void WaveBlendAudioProcessor::releaseResources()
@@ -203,6 +206,14 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+    Reverb::Parameters params;
+    params.damping = 0.7f;
+    params.roomSize = jmap(decayParamater->load(), 0.2f, 15.f, 0.f, 1.0f);
+    params.width = jmap(widthParamater->load(), 0.f, 100.f, 0.f, 1.0f);
+
+    reverbL.setParameters(params);
+    reverbR.setParameters(params);
+
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -223,6 +234,9 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
+
+        reverbL.processMono(channelData, 1);
+        reverbL.processMono(channelData, 1);
     }
 }
 
@@ -238,7 +252,7 @@ juce::AudioProcessorEditor* WaveBlendAudioProcessor::createEditor()
 }
 
 //==============================================================================
-void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData) 
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
