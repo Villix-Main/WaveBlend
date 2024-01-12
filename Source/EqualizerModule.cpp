@@ -11,7 +11,7 @@
 #include "EqualizerModule.h"
 
 
-EqualizerModule::EqualizerModule() :
+EqualizerModule::EqualizerModule(AudioProcessorValueTreeState& vts) :
     mixSlider("Mix", 0, 100),
     outputSlider("Output", -15, 10)
 {
@@ -19,11 +19,11 @@ EqualizerModule::EqualizerModule() :
 
     // Mix Slider
     addAndMakeVisible(mixSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    mixAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "equalizer_mix", mixSlider));
 
     // Output Slider
     addAndMakeVisible(outputSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    outputAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "equalizer_output", outputSlider));
 }
 
 void EqualizerModule::resized()

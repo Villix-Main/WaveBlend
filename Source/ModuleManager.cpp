@@ -66,9 +66,9 @@ void ModuleManager::setCurrentModule(String mod)
     if (mod == Modules::Reverb)
         currentModule = std::make_unique<ReverbModule>(vts);
     else if (mod == Modules::Compressor)
-        currentModule = std::make_unique<CompressorModule>();
+        currentModule = std::make_unique<CompressorModule>(vts);
     else if (mod == Modules::Equalizer)
-        currentModule = std::make_unique<EqualizerModule>();
+        currentModule = std::make_unique<EqualizerModule>(vts);
 
 
     previousModuleName = currentModuleName;

@@ -25,12 +25,71 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
 #endif
     parameters(*this, nullptr, Identifier("WaveBlend"),
         {
+            /* Reverb Module Parameters */
             std::make_unique<AudioParameterFloat>("decay", "Decay",
-            NormalisableRange{0.2f, 10.f, 0.05f}, 2.f),
+            NormalisableRange{0.2f, 15.f, 0.05f}, 2.f),
             std::make_unique<AudioParameterFloat>("predelay", "Predelay",
-            NormalisableRange(0.f, 500.f, 1.f)
+            NormalisableRange{0.f, 500.f, 1.f}, 0.f),
+            std::make_unique<AudioParameterFloat>("distance", "Distance",
+            NormalisableRange{0.f, 100.f, 1.f}, 0.f),
+            std::make_unique<AudioParameterFloat>("width", "width",
+            NormalisableRange{0.f, 100.f, 1.f}, 50.f),
+            std::make_unique<AudioParameterFloat>("reverb_lowcut_frequency", "Lowcut Frequency",
+            NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
+            std::make_unique<AudioParameterFloat>("reverb_highcut_frequency", "Highcut Frequency",
+            NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
+            std::make_unique<AudioParameterFloat>("reverb_mix", "Mix",
+            NormalisableRange{0.f, 100.f, 1.f}, 100.f),
+
+            /* Compressor Module Parameters */
+            std::make_unique<AudioParameterFloat>("threshold", "Threshold",
+            NormalisableRange{-25.f, 0.f, 0.05f}, -3.f),
+            std::make_unique<AudioParameterFloat>("ratio", "Ratio",
+            NormalisableRange{1.f, 30.f, 0.5f}, 2.f),
+            std::make_unique<AudioParameterFloat>("attack", "Attack",
+            NormalisableRange{5.f, 80.f, 0.5f}, 15.f),
+            std::make_unique<AudioParameterFloat>("release", "Release",
+            NormalisableRange{2.f, 500.f, 0.5f}, 50.f),
+            std::make_unique<AudioParameterFloat>("lowcut_sidechain", "Lowcut Frequency",
+            NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
+            std::make_unique<AudioParameterFloat>("highcut_sidechain", "Highcut Frequency",
+            NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
+            std::make_unique<AudioParameterFloat>("compressor_mix", "Mix",
+            NormalisableRange{0.f, 100.f, 1.f}, 100.f),
+            std::make_unique<AudioParameterFloat>("compressor_output", "Output",
+            NormalisableRange{-15.f, 10.f, 0.05f}, 0.f),
+
+            /* Equalizer Module Parameter */
+            std::make_unique<AudioParameterFloat>("equalizer_mix", "Mix",
+            NormalisableRange{0.f, 100.f, 1.f}, 100.f),
+            std::make_unique<AudioParameterFloat>("equalizer_output", "Output",
+            NormalisableRange{-15.f, 10.f, 0.05f}, 0.f)
+
+
         })
 {
+        // Reverb Parameters
+        decayParamater = parameters.getRawParameterValue("decay");
+        predelayParamater = parameters.getRawParameterValue("predelay");
+        distanceParamater = parameters.getRawParameterValue("distance");
+        widthParamater = parameters.getRawParameterValue("width");
+        reverbLowCutParamater = parameters.getRawParameterValue("reverb_lowcut_frequency");
+        reverbHighCutParamater = parameters.getRawParameterValue("reverb_highcut_frequency");
+        reverbMixParamater = parameters.getRawParameterValue("reverb_mix");
+
+        // Compressor Parameters
+        thresholdParameter = parameters.getRawParameterValue("threshold");
+        predelayParamater = parameters.getRawParameterValue("ratio");
+        attackParameter = parameters.getRawParameterValue("attack");
+        releaseParamter = parameters.getRawParameterValue("release");
+        lowCutSidechainParameter = parameters.getRawParameterValue("lowcut_sidechain");
+        highCutSidechainParameter = parameters.getRawParameterValue("highcut_sidechain");
+        compressorMixParameter = parameters.getRawParameterValue("compressor_mix");
+        compressorOutputParameter = parameters.getRawParameterValue("compressor_output");
+
+        // Equalizer Parameters
+        equalizerMixParameter = parameters.getRawParameterValue("equalizer_mix");
+        equalizerOutputParameter = parameters.getRawParameterValue("equalizer_output");
 }
 
 WaveBlendAudioProcessor::~WaveBlendAudioProcessor()

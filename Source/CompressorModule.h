@@ -15,7 +15,7 @@
 class CompressorModule : public Component
 {
 public:
-    CompressorModule();
+    CompressorModule(AudioProcessorValueTreeState& vts);
 
     void resized() override;
 private:
@@ -41,13 +41,13 @@ private:
     // Sidechain EQ label
     Label sidechainLabel;
 
-    // Sidechain Low Cut Slider
-    ModuleSlider sidechainLowCutSlider;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> sidechainLowCutAttachment;
+    // Low Cut Sidechain Slider
+    ModuleSlider lowCutSidechainSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lowCutSidechainAttachment;
 
-    // Sidechain High Cut Slider
-    ModuleSlider sidechainHighCutSlider;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> sidechainHighCutAttachment;
+    // High Cut Sidechain Slider
+    ModuleSlider highCutSidechainSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> highCutSidechainAttachment;
 
     // Mix Slider
     ModuleSlider mixSlider;

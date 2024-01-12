@@ -15,7 +15,7 @@
 class EqualizerModule : public Component
 {
 public:
-    EqualizerModule();
+    EqualizerModule(AudioProcessorValueTreeState& vts);
 
     void resized() override;
 private:

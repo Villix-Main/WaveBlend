@@ -61,9 +61,24 @@ private:
     std::atomic<float>* predelayParamater = nullptr;
     std::atomic<float>* distanceParamater = nullptr;
     std::atomic<float>* widthParamater = nullptr;
-    std::atomic<float>* lowCutParamater = nullptr;
-    std::atomic<float>* highCutParamater = nullptr;
+    std::atomic<float>* reverbLowCutParamater = nullptr;
+    std::atomic<float>* reverbHighCutParamater = nullptr;
     std::atomic<float>* reverbMixParamater = nullptr;
+
+    // Compressor Module Parameters
+    std::atomic<float>* thresholdParameter = nullptr;
+    std::atomic<float>* ratioParameter = nullptr;
+    std::atomic<float>* attackParameter = nullptr;
+    std::atomic<float>* releaseParamter = nullptr;
+    std::atomic<float>* lowCutSidechainParameter = nullptr;
+    std::atomic<float>* highCutSidechainParameter = nullptr;
+    std::atomic<float>* compressorMixParameter = nullptr;
+    std::atomic<float>* compressorOutputParameter = nullptr;
+
+    // Equalizer Module Parameters
+    std::atomic<float>* equalizerMixParameter = nullptr;
+    std::atomic<float>* equalizerOutputParameter = nullptr;
+
 
 
     //==============================================================================

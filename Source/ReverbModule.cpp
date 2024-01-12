@@ -13,7 +13,7 @@
 
 
 ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
-    decaySlider("Decay", 0.2, 10),
+    decaySlider("Decay", 0.2, 15),
     predelaySlider("Predelay", 0, 500),
     distanceSlider("Distance", 0, 100),
     widthSlider("Width", 0, 100),
@@ -47,15 +47,15 @@ ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
 
     // Low Cut Slider
     addAndMakeVisible(lowCutSlider);
-    lowCutAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "low_cut", lowCutSlider));
+    lowCutAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_lowcut_frequency", lowCutSlider));
    
     // High Cut Slider
     addAndMakeVisible(highCutSlider);
-    highCutAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "high_cut", highCutSlider));
+    highCutAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_highcut_frequency", highCutSlider));
 
     // Mix Slider
     addAndMakeVisible(mixSlider);
-    mixAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "slider", mixSlider));
+    mixAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_mix", mixSlider));
 }
 
 void ReverbModule::resized()

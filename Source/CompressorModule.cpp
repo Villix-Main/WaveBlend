@@ -11,13 +11,13 @@
 #include "CompressorModule.h"
 
 
-CompressorModule::CompressorModule() :
+CompressorModule::CompressorModule(AudioProcessorValueTreeState& vts) :
     thresholdSlider("Threshold", -25, 0),
-    ratioSlider("Ratio", 1, 20),
-    attackSlider("attack", 5, 100),
+    ratioSlider("Ratio", 1.f, 30.f),
+    attackSlider("attack", 5, 80),
     releaseSlider("release", 5, 500),
-    sidechainLowCutSlider("Low Cut", 20, 2000),
-    sidechainHighCutSlider("High Cut", 200, 20000),
+    lowCutSidechainSlider("Low Cut", 20, 2000),
+    highCutSidechainSlider("High Cut", 200, 20000),
     mixSlider("Mix", 0, 100),
     outputSlider("Output", -15, 10)
 {
@@ -25,19 +25,19 @@ CompressorModule::CompressorModule() :
 
     // Threshold Slider
     addAndMakeVisible(thresholdSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    thresholdAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "threshold", thresholdSlider));
 
     // Ratio Slider
     addAndMakeVisible(ratioSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    ratioAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "ratio", ratioSlider));
 
     // Attack Slider
     addAndMakeVisible(attackSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    attackAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "attack", attackSlider));
 
     // Release Slider
     addAndMakeVisible(releaseSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    releaseAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "release", releaseSlider));
 
     // Sidechain Label
     addAndMakeVisible(sidechainLabel);
@@ -45,21 +45,21 @@ CompressorModule::CompressorModule() :
     sidechainLabel.setJustificationType(Justification::centred);
     sidechainLabel.setText("Sidechain", NotificationType::dontSendNotification);
 
-    // Sidechain Low Cut Slider
-    addAndMakeVisible(sidechainLowCutSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    // Low Cut Sidechain Slider
+    addAndMakeVisible(lowCutSidechainSlider);
+    lowCutSidechainAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "lowcut_sidechain", lowCutSidechainSlider));
 
-    // Sidechain High Cut Slider
-    addAndMakeVisible(sidechainHighCutSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    // High Cut Sidechain Slider
+    addAndMakeVisible(highCutSidechainSlider);
+    highCutSidechainAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "highcut_sidechain", highCutSidechainSlider));
 
     // Mix Slider
     addAndMakeVisible(mixSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    mixAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "compressor_mix", mixSlider));
     
     // Output Slider
     addAndMakeVisible(outputSlider);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
+    outputAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "compressor_output", outputSlider));
 }
 
 void CompressorModule::resized()
@@ -73,8 +73,8 @@ void CompressorModule::resized()
     releaseSlider.setBounds(240, 197, 85, 115);
 
     sidechainLabel.setBounds(390, 20, 143, 20);
-    sidechainLowCutSlider.setBounds(390, 78, 55, 85);
-    sidechainHighCutSlider.setBounds(478, 78, 55, 85);
+    lowCutSidechainSlider.setBounds(390, 78, 55, 85);
+    highCutSidechainSlider.setBounds(478, 78, 55, 85);
 
     mixSlider.setBounds(620, 40, 85, 115);
     outputSlider.setBounds(620, 197, 85, 115);

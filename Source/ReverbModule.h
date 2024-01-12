@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "ModuleSlider.h"
 
+
 class ReverbModule : public Component
 {
 public:
