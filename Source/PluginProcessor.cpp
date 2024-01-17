@@ -164,8 +164,22 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 
-    reverbL.setSampleRate(sampleRate);
-    reverbR.setSampleRate(sampleRate);
+    dsp::ProcessSpec spec;
+
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
+
+    reverb.prepare(spec);
+
+    parameters.addParameterListener("decay", this);
+    parameters.addParameterListener("predelay", this);
+    parameters.addParameterListener("distance", this);
+    parameters.addParameterListener("width", this);
+    parameters.addParameterListener("reverb_lowcut_frequency", this);
+    parameters.addParameterListener("reverb_highcut_frequency", this);
+    parameters.addParameterListener("reverb_mix", this);
+    setReverbParams();
 }
 
 void WaveBlendAudioProcessor::releaseResources()
@@ -200,44 +214,48 @@ bool WaveBlendAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
+void WaveBlendAudioProcessor::parameterChanged(const String& parameterID, float newValue)
+{
+    setReverbParams();
+}
+
+void WaveBlendAudioProcessor::setReverbParams()
+{
+    revParams.damping = 0.7f;
+    revParams.roomSize = jmap(decayParamater->load(), 0.2f, 15.f, 0.f, 1.0f);
+    revParams.width = jmap(widthParamater->load(), 0.f, 100.f, 0.f, 1.0f);
+    revParams.wetLevel = reverbMixParamater->load() * 0.01;
+    revParams.dryLevel = 1.0f - reverbMixParamater->load() * 0.01;
+}
+
 void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    Reverb::Parameters params;
-    params.damping = 0.7f;
-    params.roomSize = jmap(decayParamater->load(), 0.2f, 15.f, 0.f, 1.0f);
-    params.width = jmap(widthParamater->load(), 0.f, 100.f, 0.f, 1.0f);
+    
 
-    reverbL.setParameters(params);
-    reverbR.setParameters(params);
+    reverb.setParameters(revParams);
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
+    dsp::AudioBlock<float> block(buffer);
+    dsp::ProcessContextReplacing<float> ctx(block);
+    reverb.process(ctx);
+
+
+    /*
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
+    
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        
+    }*/
 
-        reverbL.processMono(channelData, 1);
-        reverbL.processMono(channelData, 1);
-    }
+
 }
 
 //==============================================================================
@@ -264,6 +282,7 @@ void WaveBlendAudioProcessor::setStateInformation (const void* data, int sizeInB
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
+
 
 //==============================================================================
 // This creates new instances of the plugin..

@@ -13,7 +13,8 @@
 //==============================================================================
 /**
 */
-class WaveBlendAudioProcessor  : public juce::AudioProcessor
+class WaveBlendAudioProcessor  : public juce::AudioProcessor,
+    private AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -55,6 +56,9 @@ public:
 
 private:
     AudioProcessorValueTreeState parameters;
+
+    void parameterChanged(const String& parameterID, float newValue);
+    void setReverbParams();
     
     // Reverb Module Parameters
     std::atomic<float>* decayParamater = nullptr;
@@ -81,10 +85,9 @@ private:
 
     AudioSampleBuffer wBuffer;
 
-    Reverb reverbL;
-    Reverb reverbR;
-    Reverb::Parameters reverbLParameters;
-    Reverb::Parameters reverbRParameters;
+    
+    dsp::Reverb reverb;
+    dsp::Reverb::Parameters revParams;
 
 
     //==============================================================================
