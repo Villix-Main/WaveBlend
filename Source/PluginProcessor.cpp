@@ -25,6 +25,16 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
 #endif
     parameters(*this, nullptr, Identifier("WaveBlend"),
         {
+            /* Main Plugin Parameters */
+            std::make_unique<AudioParameterFloat>("plugin_output", "Output",
+            NormalisableRange{-20.f, 10.f, .05f}, 0.f),
+            std::make_unique<AudioParameterFloat>("plugin_mix", "Mix",
+            NormalisableRange{0.f, 100.f, .5f}, 100.f),
+
+            std::make_unique<AudioParameterChoice>("current_modules", "Current Modules", 
+            StringArray { Modules::Reverb, Modules::Compressor, Modules::Equalizer},
+            0),
+
             /* Reverb Module Parameters */
             std::make_unique<AudioParameterFloat>("decay", "Decay",
             NormalisableRange{0.2f, 15.f, 0.05f}, 2.f),
@@ -68,6 +78,11 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
 
         })
 {
+        // Main Plugin Parameters
+        pluginOutputParameter = parameters.getRawParameterValue("plugin_output");
+        pluginMixParameter = parameters.getRawParameterValue("plugin_mix");
+
+
         // Reverb Parameters
         decayParamater = parameters.getRawParameterValue("decay");
         predelayParamater = parameters.getRawParameterValue("predelay");
@@ -225,7 +240,7 @@ void WaveBlendAudioProcessor::setReverbParams()
     revParams.roomSize = jmap(decayParamater->load(), 0.2f, 15.f, 0.f, 1.0f);
     revParams.width = jmap(widthParamater->load(), 0.f, 100.f, 0.f, 1.0f);
     revParams.wetLevel = reverbMixParamater->load() * 0.01;
-    revParams.dryLevel = 1.0f - reverbMixParamater->load() * 0.01;
+    revParams.dryLevel = 1.0f;
 }
 
 void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)

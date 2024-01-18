@@ -12,9 +12,12 @@
 
 
 //==============================================================================
-WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProcessor& p, AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), audioProcessor (p),
-    moduleManager(vts)
+WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProcessor& p, AudioProcessorValueTreeState& vts)
+    : AudioProcessorEditor(&p), audioProcessor(p),
+    moduleManager(vts),
+    outputSlider("Output", -20.f, 10.f, 12),
+    mixSlider("Mix", 0.f, 100.f, 12)
+
 {
     // Set Look And Feel of plugin
     setLookAndFeel(&lookAndFeel);
@@ -22,33 +25,12 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor (WaveBlendAudioProc
     barLabelFont.setHeight(12);
 
     // Output Db Slider
-    addAndMakeVisible(outputDbSlider);
-    outputDbSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    outputDbSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-    outputDbSlider.setRange(-15.0f, 0.f);
-    //outputDbAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "output_db", outputDbSlider));
-    
-    // Output Db Label
-    addAndMakeVisible(outputDbLabel);
-    outputDbLabel.setFont(barLabelFont);
-    outputDbLabel.setText("Output", dontSendNotification);
-    outputDbLabel.setJustificationType(Justification::centred);
-    outputDbLabel.attachToComponent(&outputDbSlider, false);
+    addAndMakeVisible(outputSlider);
+    outputAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "plugin_output", outputSlider));
 
     // Mix Slider
     addAndMakeVisible(mixSlider);
-    mixSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    mixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 40, 14);
-    mixSlider.setRange(0, 100);
-    //mixSliderAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "mix", mixSlider));
-    
-    // Mix Label
-    addAndMakeVisible(mixLabel);
-    mixLabel.setFont(barLabelFont);
-    mixLabel.setText("Mix", dontSendNotification);
-    mixLabel.setJustificationType(Justification::centred);
-    mixLabel.attachToComponent(&mixSlider, false);
-
+    mixAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "plugin_mix", mixSlider));
     
     // Plugin Preset Menu
     addAndMakeVisible(pluginPresetMenu);
@@ -134,7 +116,7 @@ void WaveBlendAudioProcessorEditor::resized()
 
     pluginPresetMenu.setBounds(253, 20, 197, 30);
    
-    outputDbSlider.setBounds(742, 19, 53, 45);
+    outputSlider.setBounds(742, 19, 53, 45);
     mixSlider.setBounds(785, 19, 53, 45);
 
     //addModule.setBounds(44, 86, 122, 87);

@@ -51,14 +51,12 @@ private:
 
 
     // Output Db Slider
-    Slider outputDbSlider;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> outputDbAttachment;
-    juce::Label outputDbLabel;
+    ModuleSlider outputSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> outputAttachment;
 
     // Mix Slider
-    Slider mixSlider;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
-    juce::Label mixLabel;
+    ModuleSlider mixSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mixAttachment;
 
     // Plugin Preset Dropdown Menu
     ComboBox pluginPresetMenu;

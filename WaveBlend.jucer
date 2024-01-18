@@ -15,6 +15,8 @@
       </GROUP>
     </GROUP>
     <GROUP id="{55F6F1F6-8F3B-0537-6DCC-8EC2AF2B3976}" name="Source">
+      <FILE id="hXs2Tz" name="UIState.cpp" compile="1" resource="0" file="Source/UIState.cpp"/>
+      <FILE id="D1DmdA" name="UIState.h" compile="0" resource="0" file="Source/UIState.h"/>
       <FILE id="PL5ZSM" name="Modules.h" compile="0" resource="0" file="Source/Modules.h"/>
       <FILE id="JcTQQl" name="ModuleManager.cpp" compile="1" resource="0"
             file="Source/ModuleManager.cpp"/>

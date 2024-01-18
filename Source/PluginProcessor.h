@@ -59,7 +59,15 @@ private:
 
     void parameterChanged(const String& parameterID, float newValue);
     void setReverbParams();
+
+    // Main Plugin Parameters
+    std::atomic<float>* pluginOutputParameter = nullptr;
+    std::atomic<float>* pluginMixParameter = nullptr;
+
     
+    std::atomic<std::vector<String>>* currentModules = nullptr;
+
+
     // Reverb Module Parameters
     std::atomic<float>* decayParamater = nullptr;
     std::atomic<float>* predelayParamater = nullptr;
