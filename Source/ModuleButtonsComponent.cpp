@@ -12,9 +12,10 @@
 
 
 
-ModuleButtonsComponent::ModuleButtonsComponent()
+ModuleButtonsComponent::ModuleButtonsComponent(UIState& currentState)
 {
     setLookAndFeel(&lookAndFeel);
+
 
     addModuleButtonIsDrawn = false;
     moduleNames = { Modules::Reverb, Modules::Compressor, Modules::Equalizer };
@@ -22,9 +23,40 @@ ModuleButtonsComponent::ModuleButtonsComponent()
     moduleCount = 0;
     addModuleButtonIndex = 0;
     currentModule.index = -1;
+  
+    if (currentState.getCurrentModules().size() <= 0)
+    {
+        renderFromState(currentState);
+    }
 
     drawAddModuleButton();
 }
+
+void ModuleButtonsComponent::renderFromState(UIState cs)
+{
+    currentModules.addArray(cs.getCurrentModules()); 
+
+    for (String mod : currentModules)
+    {
+        auto newButton = std::make_unique<ModuleButton>();
+        newButton->setButtonText(mod);
+        newButton->addListener(this);
+        moduleButtons.push_back(std::move(newButton));
+        
+        currentModules.add(mod);
+        addModuleButtonIndex++;
+        moduleCount++;
+    }
+
+    currentModule = cs.getCurrentModule();
+    focusOnButton(currentModule.index, currentModule.moduleName);
+
+    if (moduleCount >= 3)
+        addModuleButtonIsDrawn = true;
+
+    resized();
+}
+
 
 void ModuleButtonsComponent::drawAddModuleButton()
 {
@@ -80,7 +112,7 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
         moduleButtons[addModuleButtonIndex]->setButtonText(newModule);
         moduleButtons[addModuleButtonIndex]->addChangeListener(this);
         moduleButtons[addModuleButtonIndex]->drawLabels();
-        currentModules.push_back(newModule);
+        currentModules.add(newModule);
         moduleCount++;
 
         if (moduleCount > 1)
@@ -210,7 +242,7 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 
                 removeFromCurrentModules(currentModule);
 
-                currentModules.push_back(moduleNames[j]);
+                currentModules.add(moduleNames[j]);
                 
                 focusOnButton(i, moduleNames[j]);
 
@@ -261,7 +293,7 @@ void ModuleButtonsComponent::removeFromCurrentModules(String mod)
     for (int i = 0; i < currentModules.size(); i++)
     {
         if (currentModules[i] == mod)
-            currentModules.erase(currentModules.begin() + i);
+            currentModules.remove(i);
     }
 }
 

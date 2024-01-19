@@ -16,7 +16,8 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     : AudioProcessorEditor(&p), audioProcessor(p),
     moduleManager(vts),
     outputSlider("Output", -20.f, 10.f, 12),
-    mixSlider("Mix", 0.f, 100.f, 12)
+    mixSlider("Mix", 0.f, 100.f, 12),
+    moduleButtons()
 
 {
     // Set Look And Feel of plugin
@@ -42,7 +43,7 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     pluginPresetMenu.addItem("Flute", 5);
 
     addAndMakeVisible(moduleManager);
-
+    
     //addAndMakeVisible(rm);
 
     // Add Module Button

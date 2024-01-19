@@ -9,3 +9,24 @@
 */
 
 #include "UIState.h"
+
+UIState::UIState()
+{
+}
+
+
+
+String UIState::isChangeInState()
+{
+    return "";
+}
+
+StringArray UIState::getCurrentModules()
+{
+    return this->currentModules;
+}
+
+ModuleButtonData UIState::getCurrentModule()
+{
+    return this->currentModule;
+}

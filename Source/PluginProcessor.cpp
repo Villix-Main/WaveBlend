@@ -31,9 +31,6 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterFloat>("plugin_mix", "Mix",
             NormalisableRange{0.f, 100.f, .5f}, 100.f),
 
-            std::make_unique<AudioParameterChoice>("current_modules", "Current Modules", 
-            StringArray { Modules::Reverb, Modules::Compressor, Modules::Equalizer},
-            0),
 
             /* Reverb Module Parameters */
             std::make_unique<AudioParameterFloat>("decay", "Decay",
@@ -75,9 +72,11 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterFloat>("equalizer_output", "Output",
             NormalisableRange{-15.f, 10.f, 0.05f}, 0.f)
 
-
         })
 {
+        // The UI
+        
+
         // Main Plugin Parameters
         pluginOutputParameter = parameters.getRawParameterValue("plugin_output");
         pluginMixParameter = parameters.getRawParameterValue("plugin_mix");
@@ -245,6 +244,8 @@ void WaveBlendAudioProcessor::setReverbParams()
 
 void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();

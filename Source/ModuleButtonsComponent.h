@@ -14,13 +14,10 @@
 #include "WaveBlendLookAndFeel.h"
 #include "ModuleButton.h"
 #include "Modules.h"
+#include "UIState.h"
+#include "ModuleButtonData.h"
 
 
-struct ModuleButtonData
-{
-    int index = -1;
-    String moduleName;
-};
 
 
 class ModuleButtonsComponent : public juce::Component,
@@ -29,7 +26,9 @@ class ModuleButtonsComponent : public juce::Component,
     public ChangeBroadcaster
 {
 public:
-    ModuleButtonsComponent();
+    //ModuleButtonsComponent();
+    ModuleButtonsComponent(UIState& currentState);
+    ModuleButtonsComponent(){}
 
     ~ModuleButtonsComponent() { }
 
@@ -50,14 +49,14 @@ public:
 private:
     WaveBlendLookAndFeel lookAndFeel;
 
-    ModuleButton test;
+    //ModuleButton test;
 
     std::vector<std::unique_ptr<ModuleButton>> moduleButtons;
     bool addModuleButtonIsDrawn = false;
     
     // List of module names in plugin
-    std::vector<String> moduleNames;
-    std::vector<String> currentModules;
+    StringArray moduleNames;
+    StringArray currentModules;
     int moduleCount = 0;
     String moduleToRender;
 
@@ -68,6 +67,8 @@ private:
     int addModuleButtonIndex = 0;
 
     ModuleButtonAction buttonAction;
+
+    void renderFromState(UIState currentState);
 
     void focusOnButton(int index, String modName);
 

@@ -10,18 +10,27 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "ModuleButtonData.h"
 
 
 class UIState
 {
 public:
     UIState();
-    UIState(StringArray currentMods, String currentMod, char orderOfModules);
+    //UIState(StringArray currentMods, String currentMod, char orderOfModules);
+    
+    String isChangeInState();
 
+    StringArray getCurrentModules();
+    ModuleButtonData getCurrentModule();
+    
 private:
     StringArray currentModules;
 
-    String currentModule;
+    ModuleButtonData currentModule;
+    String newestModule;
 
-    char orderOfModules[];
+    char orderOfModules[3];
+
+    bool changeInState;
 };

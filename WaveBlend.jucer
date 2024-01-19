@@ -38,6 +38,8 @@
         <FILE id="hdS95B" name="ModuleButton.cpp" compile="1" resource="0"
               file="Source/ModuleButton.cpp"/>
         <FILE id="JxzGY9" name="ModuleButton.h" compile="0" resource="0" file="Source/ModuleButton.h"/>
+        <FILE id="YopRSw" name="ModuleButtonData.h" compile="0" resource="0"
+              file="Source/ModuleButtonData.h"/>
         <FILE id="O1WsnS" name="ModuleButtonsComponent.cpp" compile="1" resource="0"
               file="Source/ModuleButtonsComponent.cpp"/>
         <FILE id="nTfu6p" name="ModuleButtonsComponent.h" compile="0" resource="0"
