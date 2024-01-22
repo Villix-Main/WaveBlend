@@ -48,7 +48,7 @@ private:
 
     // Top Bar Rectangle
     Rectangle<int> topBar;
-
+    UIState tests;
 
     // Output Db Slider
     ModuleSlider outputSlider;
@@ -67,6 +67,8 @@ private:
     ModuleButtonsComponent moduleButtons;
 
     ModuleManager moduleManager;
+
+    std::atomic<float>* moduleButtonsOrderPtr = nullptr;
 
     //ReverbModule rm;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessorEditor)

@@ -21,9 +21,9 @@ public:
 
     void RemoveCurrentModule();
 
-    void RemoveAndDontRender();
+    void RemoveAndDontRender(String mod);
 
-    void SetAndRenderModule(String module);
+    void SetAndRenderModule(String mod);
 
     String GetCurrentModule(String modules);
 
@@ -31,6 +31,10 @@ private:
     std::vector<String> modules;
 
     std::unique_ptr<Component> currentModule;
+    std::atomic<float>* reverbEnabledPtr = nullptr;
+    std::atomic<float>* compressorEnabledPtr = nullptr;
+    std::atomic<float>* equalizerEnabledPtr = nullptr;
+
 
     String currentModuleName;
     String previousModuleName;

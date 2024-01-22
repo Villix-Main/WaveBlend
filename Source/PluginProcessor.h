@@ -63,6 +63,10 @@ private:
     
     // Current UIState of plugin
     UIState currentState;
+    std::atomic<float>* reverbEnabledParamter = nullptr;
+    std::atomic<float>* compressorEnabledParamter = nullptr;
+    std::atomic<float>* equalizerEnabledParamter = nullptr;
+    std::atomic<float>* moduleButtonsOrder = nullptr;
 
 
     // Main Plugin Parameters

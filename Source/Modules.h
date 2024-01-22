@@ -16,6 +16,10 @@ namespace Modules
     const String Compressor{ "Compressor" };
     const String Equalizer{ "Equalizer" };
     const String None { "None" };
+
+    const String ReverbPos{ 1 };
+    const String CompressorPos{ 2 };
+    const String EqualizerPos{ 3 };
 }
 
 enum ModuleButtonAction

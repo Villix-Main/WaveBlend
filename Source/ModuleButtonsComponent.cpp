@@ -24,7 +24,7 @@ ModuleButtonsComponent::ModuleButtonsComponent(UIState& currentState)
     addModuleButtonIndex = 0;
     currentModule.index = -1;
   
-    if (currentState.getCurrentModules().size() <= 0)
+    if (currentState.getCurrentModules().size() > 0)
     {
         renderFromState(currentState);
     }
@@ -32,8 +32,12 @@ ModuleButtonsComponent::ModuleButtonsComponent(UIState& currentState)
     drawAddModuleButton();
 }
 
-void ModuleButtonsComponent::renderFromState(UIState cs)
+void ModuleButtonsComponent::renderFromState(UIState cs, int order)
 {
+    // make a for loop that goes around 3 times and 
+    
+
+
     currentModules.addArray(cs.getCurrentModules()); 
 
     for (String mod : currentModules)
@@ -196,11 +200,12 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 
                 }
                 
-
-                sendChangeMessage();
             }
+            moduleToRemove = moduleButtons[i]->getButtonText();
+            sendChangeMessage();
 
             removeFromCurrentModules(moduleButtons[i]->getButtonText());
+            
             moduleButtons[i].reset();
             moduleButtons.erase(moduleButtons.begin() + i);
             
@@ -226,6 +231,7 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             if (moduleCount >= 3)
                 return;
 
+            String tempModToRemove = moduleButtons[i]->getButtonText();
             for (int j = 0; j < moduleNames.size(); j++)
             {
                 bool moduleExists = false;
@@ -248,6 +254,7 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 
                 moduleButtons[i]->setButtonAction(ModuleButtonAction::None);
                 moduleToRender = moduleNames[j];
+                moduleToRemove = tempModToRemove;
                 buttonAction = ModuleButtonAction::Switch;
                 sendChangeMessage();
 
@@ -257,9 +264,18 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
     }
 }
 
+StringArray& ModuleButtonsComponent::getCurrentModules()
+{
+    return this->currentModules;
+}
+
 String ModuleButtonsComponent::getModuleToRender()
 {
     return this->moduleToRender;
+}
+String ModuleButtonsComponent::getModuleToRemove()
+{
+    return this->moduleToRemove;
 }
 ModuleButtonAction ModuleButtonsComponent::getButtonAction()
 {

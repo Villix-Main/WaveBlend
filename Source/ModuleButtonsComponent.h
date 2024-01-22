@@ -42,8 +42,11 @@ public:
     // Listener method that will be called when module button remove label is called
     void changeListenerCallback(ChangeBroadcaster* source);
 
+    StringArray& getCurrentModules();
 
     String getModuleToRender();
+    String getModuleToRemove();
+
     ModuleButtonAction getButtonAction();
 
 private:
@@ -58,7 +61,9 @@ private:
     StringArray moduleNames;
     StringArray currentModules;
     int moduleCount = 0;
+
     String moduleToRender;
+    String moduleToRemove;
 
     ModuleButtonData currentModule;
     ModuleButtonData previousModule;
@@ -68,7 +73,7 @@ private:
 
     ModuleButtonAction buttonAction;
 
-    void renderFromState(UIState currentState);
+    void renderFromState(UIState currentState, int);
 
     void focusOnButton(int index, String modName);
 

@@ -17,7 +17,7 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     moduleManager(vts),
     outputSlider("Output", -20.f, 10.f, 12),
     mixSlider("Mix", 0.f, 100.f, 12),
-    moduleButtons()
+    moduleButtons(tests)
 
 {
     // Set Look And Feel of plugin
@@ -53,6 +53,8 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     
     addAndMakeVisible(moduleButtons);
     moduleButtons.addChangeListener(this);
+
+    moduleButtonsOrderPtr = vts.getRawParameterValue("module_buttons_order");
     
 
     // Make sure that before the constructor has finished, you've set the
@@ -62,6 +64,16 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
 
 WaveBlendAudioProcessorEditor::~WaveBlendAudioProcessorEditor()
 {
+    StringArray arr = moduleButtons.getCurrentModules();
+    
+    String moduleButtonsOrder;
+    for (String mod : arr)
+    {
+        String firstChar(mod[1]);
+        moduleButtonsOrder.append(firstChar, 3);
+    }
+
+    *moduleButtonsOrderPtr = moduleButtonsOrder.getIntValue();
 }
 
 //==============================================================================
@@ -131,7 +143,8 @@ void WaveBlendAudioProcessorEditor::resized()
 
 void WaveBlendAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source)
 {
-    auto moduleToRender= moduleButtons.getModuleToRender();
+    auto moduleToRender = moduleButtons.getModuleToRender();
+    auto moduleToRemove = moduleButtons.getModuleToRemove();
     auto buttonAction = moduleButtons.getButtonAction();
 
     switch (buttonAction)
@@ -140,13 +153,15 @@ void WaveBlendAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* so
         moduleManager.SetAndRenderModule(moduleToRender);
         break;
     case ModuleButtonAction::Switch:
+        moduleManager.RemoveAndDontRender(moduleToRemove);
         moduleManager.SetAndRenderModule(moduleToRender);
         break;
     case ModuleButtonAction::Remove:
+        moduleManager.RemoveAndDontRender(moduleToRemove);
         moduleManager.SetAndRenderModule(moduleToRender);
         break;
     case ModuleButtonAction::None:
-        moduleManager.RemoveAndDontRender();
+        moduleManager.RemoveAndDontRender(moduleToRemove);
         break;
 
     }
