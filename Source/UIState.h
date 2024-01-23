@@ -16,12 +16,13 @@
 class UIState
 {
 public:
+    UIState(ModuleButtonData currrentMod, StringArray currentMods);
     UIState();
     //UIState(StringArray currentMods, String currentMod, char orderOfModules);
     
     String isChangeInState();
 
-    StringArray getCurrentModules();
+    StringArray& getCurrentModules();
     ModuleButtonData getCurrentModule();
     
 private:
@@ -30,7 +31,5 @@ private:
     ModuleButtonData currentModule;
     String newestModule;
 
-    char orderOfModules[3];
-
-    bool changeInState;
+    //bool changeInState;
 };

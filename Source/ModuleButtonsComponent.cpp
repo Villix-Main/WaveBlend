@@ -12,7 +12,7 @@
 
 
 
-ModuleButtonsComponent::ModuleButtonsComponent(UIState& currentState)
+ModuleButtonsComponent::ModuleButtonsComponent()
 {
     setLookAndFeel(&lookAndFeel);
 
@@ -23,42 +23,48 @@ ModuleButtonsComponent::ModuleButtonsComponent(UIState& currentState)
     moduleCount = 0;
     addModuleButtonIndex = 0;
     currentModule.index = -1;
-  
+ /* 
     if (currentState.getCurrentModules().size() > 0)
     {
-        renderFromState(currentState);
-    }
+        renderFromState(currentState, 3);
+    }*/
 
-    drawAddModuleButton();
 }
 
-void ModuleButtonsComponent::renderFromState(UIState cs, int order)
+void ModuleButtonsComponent::renderFromState(UIState& cs)
 {
-    // make a for loop that goes around 3 times and 
-    
-
-
     currentModules.addArray(cs.getCurrentModules()); 
 
-    for (String mod : currentModules)
+    if (currentModules.size() > 0)
     {
-        auto newButton = std::make_unique<ModuleButton>();
-        newButton->setButtonText(mod);
-        newButton->addListener(this);
-        moduleButtons.push_back(std::move(newButton));
-        
-        currentModules.add(mod);
-        addModuleButtonIndex++;
-        moduleCount++;
+        for (String mod : currentModules)
+        {
+            auto newButton = std::make_unique<ModuleButton>();
+            newButton->setButtonText(mod);
+            newButton->addListener(this);
+            newButton->addChangeListener(this);
+            moduleButtons.push_back(std::move(newButton));
+
+            currentModules.add(mod);
+            moduleCount++;
+
+            if (moduleButtons.size() < 3)
+                addModuleButtonIndex++;
+        }
+
+        currentModule = cs.getCurrentModule();
+        focusOnButton(currentModule.index, currentModule.moduleName);
+        moduleToRender = currentModule.moduleName;
+        buttonAction = ModuleButtonAction::Add;
+        sendChangeMessage();
+
+        if (moduleCount >= 3)
+            addModuleButtonIsDrawn = true;
+
+
+        resized();
     }
-
-    currentModule = cs.getCurrentModule();
-    focusOnButton(currentModule.index, currentModule.moduleName);
-
-    if (moduleCount >= 3)
-        addModuleButtonIsDrawn = true;
-
-    resized();
+    drawAddModuleButton();
 }
 
 
@@ -177,6 +183,7 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
            
             if (moduleCount <= 0)
             {
+                currentModules = {};
                 buttonAction = ModuleButtonAction::None;
             }
             else
@@ -267,6 +274,11 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 StringArray& ModuleButtonsComponent::getCurrentModules()
 {
     return this->currentModules;
+}
+
+ModuleButtonData ModuleButtonsComponent::getCurrentModule()
+{
+    return this->currentModule;
 }
 
 String ModuleButtonsComponent::getModuleToRender()

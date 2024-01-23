@@ -17,7 +17,7 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     moduleManager(vts),
     outputSlider("Output", -20.f, 10.f, 12),
     mixSlider("Mix", 0.f, 100.f, 12),
-    moduleButtons(tests)
+    moduleButtons()
 
 {
     // Set Look And Feel of plugin
@@ -55,6 +55,9 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     moduleButtons.addChangeListener(this);
 
     moduleButtonsOrderPtr = vts.getRawParameterValue("module_buttons_order");
+
+
+    moduleButtons.renderFromState(stateXMLReader.getUIState());
     
 
     // Make sure that before the constructor has finished, you've set the
@@ -64,16 +67,8 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
 
 WaveBlendAudioProcessorEditor::~WaveBlendAudioProcessorEditor()
 {
-    StringArray arr = moduleButtons.getCurrentModules();
-    
-    String moduleButtonsOrder;
-    for (String mod : arr)
-    {
-        String firstChar(mod[1]);
-        moduleButtonsOrder.append(firstChar, 3);
-    }
-
-    *moduleButtonsOrderPtr = moduleButtonsOrder.getIntValue();
+    UIState cs(moduleButtons.getCurrentModule(), moduleButtons.getCurrentModules());
+    stateXMLReader.setUIState(cs);
 }
 
 //==============================================================================

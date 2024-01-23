@@ -27,8 +27,7 @@ class ModuleButtonsComponent : public juce::Component,
 {
 public:
     //ModuleButtonsComponent();
-    ModuleButtonsComponent(UIState& currentState);
-    ModuleButtonsComponent(){}
+    ModuleButtonsComponent();
 
     ~ModuleButtonsComponent() { }
 
@@ -42,7 +41,11 @@ public:
     // Listener method that will be called when module button remove label is called
     void changeListenerCallback(ChangeBroadcaster* source);
 
+	void renderFromState(UIState& currentState);
+
+
     StringArray& getCurrentModules();
+    ModuleButtonData getCurrentModule();
 
     String getModuleToRender();
     String getModuleToRemove();
@@ -73,7 +76,6 @@ private:
 
     ModuleButtonAction buttonAction;
 
-    void renderFromState(UIState currentState, int);
 
     void focusOnButton(int index, String modName);
 

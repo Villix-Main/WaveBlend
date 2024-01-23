@@ -16,6 +16,108 @@
 #include "ModuleManager.h"
 
 
+class XMLReader
+{
+public:
+	UIState getUIState()
+	{
+		File f = getXmlFile();
+
+		ModuleButtonData currentModule;
+		StringArray currentModules;
+
+		if (f.exists())
+		{
+			XmlDocument dataDoc{ f };
+			loadedXml = juce::parseXML(f);
+			
+            
+
+			for (auto* childElement = loadedXml->getFirstChildElement(); childElement != nullptr; childElement = childElement->getNextElement())
+			{
+				//String test = childElement->getAttributeValue(0);
+
+				auto elementTagName = childElement->getTagName();
+
+                if (elementTagName == "CurrentModule")
+                {
+                    currentModule.index = childElement->getAttributeValue(0).getIntValue();
+                    currentModule.moduleName = childElement->getAttributeValue(1);
+                }
+
+				if (elementTagName == "CurrentModules")
+				{
+					for (auto* innerElements = childElement->getFirstChildElement(); innerElements != nullptr; innerElements = innerElements->getNextElement())
+					{
+                        auto currentVal = innerElements->getAttributeValue(0);
+
+                        if (!currentVal.isEmpty())
+						    currentModules.add(innerElements->getAttributeValue(0));
+					}
+				}
+			}
+		}
+
+
+        UIState currentState(currentModule, currentModules);
+        return currentState;
+	}
+
+    void setUIState(UIState& cs)
+    {
+		File f = getXmlFile();
+
+        if (f.exists())
+        {
+			XmlDocument dataDoc{ f };
+			loadedXml = juce::parseXML(f);
+            
+            ModuleButtonData buttonData = cs.getCurrentModule();
+
+			for (auto* childElement = loadedXml->getFirstChildElement(); childElement != nullptr; childElement = childElement->getNextElement())
+			{
+                auto elementTagName = childElement->getTagName();
+
+				if (elementTagName == "CurrentModule")
+				{
+                    childElement->setAttribute("index", buttonData.index);
+                    childElement->setAttribute("name", buttonData.moduleName);
+				}
+
+				if (elementTagName == "CurrentModules")
+				{
+					StringArray currentMods = cs.getCurrentModules();
+                    auto innerElement = childElement->getFirstChildElement();
+					for (int i = 0; i < currentMods.size(); i++)
+					{
+                        innerElement->setAttribute("module", currentMods[i]);
+                        innerElement = innerElement->getNextElement();
+					}
+				}
+			}
+
+            File appdir = File::getCurrentWorkingDirectory();
+            File xmlFile = appdir.getChildFile("current_state.xml");
+            loadedXml->writeToFile(xmlFile, String());
+            
+        }
+    }
+
+	
+
+private:
+	std::unique_ptr<XmlElement> loadedXml;
+
+	File getXmlFile()
+	{
+		File appDir = File::getCurrentWorkingDirectory();
+		File xmlFile = appDir.getChildFile("current_state.xml");
+		return xmlFile;
+	}
+};
+
+
+
 //==============================================================================
 /**
 */
@@ -69,6 +171,8 @@ private:
     ModuleManager moduleManager;
 
     std::atomic<float>* moduleButtonsOrderPtr = nullptr;
+
+    XMLReader stateXMLReader;
 
     //ReverbModule rm;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessorEditor)

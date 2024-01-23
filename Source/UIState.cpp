@@ -10,8 +10,15 @@
 
 #include "UIState.h"
 
+UIState::UIState(ModuleButtonData currentMod, StringArray currentMods) :
+    currentModule(currentMod), currentModules(currentMods)
+{
+
+}
+
 UIState::UIState()
 {
+
 }
 
 
@@ -21,7 +28,7 @@ String UIState::isChangeInState()
     return "";
 }
 
-StringArray UIState::getCurrentModules()
+StringArray& UIState::getCurrentModules()
 {
     return this->currentModules;
 }
