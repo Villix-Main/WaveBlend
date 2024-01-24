@@ -45,7 +45,6 @@ void ModuleButtonsComponent::renderFromState(UIState& cs)
             newButton->addChangeListener(this);
             moduleButtons.push_back(std::move(newButton));
 
-            currentModules.add(mod);
             moduleCount++;
 
             if (moduleButtons.size() < 3)

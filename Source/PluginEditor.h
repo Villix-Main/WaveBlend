@@ -30,7 +30,7 @@ public:
 		{
 			XmlDocument dataDoc{ f };
 			loadedXml = juce::parseXML(f);
-			
+            //loadedXml = juce::parseXML(String(BinaryData::current_ui_state_xml, BinaryData::current_ui_state_xmlSize));
             
 
 			for (auto* childElement = loadedXml->getFirstChildElement(); childElement != nullptr; childElement = childElement->getNextElement())
@@ -87,11 +87,21 @@ public:
 				if (elementTagName == "CurrentModules")
 				{
 					StringArray currentMods = cs.getCurrentModules();
+                    
                     auto innerElement = childElement->getFirstChildElement();
-					for (int i = 0; i < currentMods.size(); i++)
+					/*	for (int i = 0; i < currentMods.size(); i++)
+						{
+							innerElement->setAttribute("module", currentMods[i]);
+							innerElement = innerElement->getNextElement();
+						}*/
+
+                    int index = -1;
+					for (auto* innerElements = childElement->getFirstChildElement(); innerElements != nullptr; innerElements = innerElements->getNextElement())
 					{
-                        innerElement->setAttribute("module", currentMods[i]);
-                        innerElement = innerElement->getNextElement();
+                        if (++index < currentMods.size())
+                            innerElements->setAttribute("module", currentMods[index]);
+                        else
+                            innerElements->setAttribute("module", String());
 					}
 				}
 			}
@@ -99,7 +109,7 @@ public:
             File appdir = File::getCurrentWorkingDirectory();
             File xmlFile = appdir.getChildFile("current_state.xml");
             loadedXml->writeToFile(xmlFile, String());
-            
+            //auto stream = juce::MemoryInputStream(BinaryData::current_ui_state_xml, BinaryData::current_ui_state_xmlSize, true);
         }
     }
 

@@ -5,6 +5,8 @@
               includeBinaryInJuceHeader="1">
   <MAINGROUP id="VUColu" name="WaveBlend">
     <GROUP id="{3BD44E6D-DA33-36C1-AD38-527D1113EBEE}" name="Assets">
+      <FILE id="qEsPwS" name="current_ui_state.xml" compile="0" resource="1"
+            file="../../Documents/current_ui_state.xml"/>
       <GROUP id="{A34B6CED-8833-BF68-8789-252224037839}" name="Fonts">
         <FILE id="pIMPqp" name="segoeui.ttf" compile="0" resource="1" file="Assets/Fonts/segoeui.ttf"/>
         <FILE id="GobfeC" name="segoeuib.ttf" compile="0" resource="1" file="Assets/Fonts/segoeuib.ttf"/>
