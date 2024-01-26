@@ -16,6 +16,7 @@
 #include "Modules.h"
 #include "UIState.h"
 #include "ModuleButtonData.h"
+#include "UIStateStore.h"
 
 
 
@@ -75,7 +76,8 @@ private:
     int addModuleButtonIndex = 0;
 
     ModuleButtonAction buttonAction;
-
+    UIState currentState;
+    //UIStateStore uiStateStore;
 
     void focusOnButton(int index, String modName);
 

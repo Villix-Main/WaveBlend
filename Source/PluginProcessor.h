@@ -66,7 +66,7 @@ private:
     std::atomic<float>* reverbEnabledParamter = nullptr;
     std::atomic<float>* compressorEnabledParamter = nullptr;
     std::atomic<float>* equalizerEnabledParamter = nullptr;
-    std::atomic<float>* moduleButtonsOrder = nullptr;
+    std::atomic<float>* uiStateValue = nullptr;
 
 
     // Main Plugin Parameters

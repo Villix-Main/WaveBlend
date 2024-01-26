@@ -16,6 +16,7 @@
 #include "ModuleManager.h"
 
 
+
 class XMLReader
 {
 public:
@@ -175,14 +176,15 @@ private:
     
     // Add Module Button
 	//TextButton addModule;
+
+    std::atomic<float>* idk = nullptr;
     
     ModuleButtonsComponent moduleButtons;
 
     ModuleManager moduleManager;
 
-    std::atomic<float>* moduleButtonsOrderPtr = nullptr;
-
     XMLReader stateXMLReader;
+    UIStateStore uiStateStore;
 
     //ReverbModule rm;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessorEditor)

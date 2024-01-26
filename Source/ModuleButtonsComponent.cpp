@@ -145,6 +145,8 @@ void ModuleButtonsComponent::buttonClicked(Button* button)
         buttonAction = ModuleButtonAction::Add;
         sendChangeMessage();
         
+
+
         resized();
     }
     else

@@ -29,8 +29,8 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterBool>("reverb_enabled", "Reverb Enabled", false),
             std::make_unique<AudioParameterBool>("compressor_enabled", "Compressor Enabled", false),
             std::make_unique<AudioParameterBool>("equalizer_enabled", "Equalizer Enabled", false),
-            std::make_unique<AudioParameterFloat>("module_buttons_order", "Module Buttons Order", 
-            NormalisableRange{0.f, 999999999.f, 1.f}, 0),
+            std::make_unique<AudioParameterFloat>("ui_state_value", "UI State Value", 
+            NormalisableRange{0.f, 999999999.f, 1.f}, 1110.f),
 
             /* Main Plugin Parameters */
             std::make_unique<AudioParameterFloat>("plugin_output", "Output",
@@ -85,7 +85,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
         reverbEnabledParamter = parameters.getRawParameterValue("reverb_enabled");
         compressorEnabledParamter = parameters.getRawParameterValue("compressor_enabled");
         equalizerEnabledParamter = parameters.getRawParameterValue("equalizer_enabled");
-        moduleButtonsOrder = parameters.getRawParameterValue("module_buttons_order");
+        uiStateValue = parameters.getRawParameterValue("ui_state_value");
 
         // Main Plugin Parameters
         pluginOutputParameter = parameters.getRawParameterValue("plugin_output");
@@ -199,6 +199,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
     parameters.addParameterListener("equalizer_enabled", this);
+    parameters.addParameterListener("ui_state_value", this);
 
     parameters.addParameterListener("decay", this);
     parameters.addParameterListener("predelay", this);
@@ -258,7 +259,7 @@ void WaveBlendAudioProcessor::setReverbParams()
     revParams.roomSize = jmap(decayParamater->load(), 0.2f, 15.f, 0.f, 1.0f);
     revParams.width = jmap(widthParamater->load(), 0.f, 100.f, 0.f, 1.0f);
     revParams.wetLevel = reverbMixParamater->load() * 0.01;
-    revParams.dryLevel = 1.0f;
+    revParams.dryLevel = 1.f - (reverbMixParamater->load() * 0.01);
 }
 
 void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -268,7 +269,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
+    
     
     if (reverbEnabledParamter->load())
     {
