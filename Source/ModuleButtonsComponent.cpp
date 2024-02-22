@@ -18,6 +18,7 @@ ModuleButtonsComponent::ModuleButtonsComponent()
 
 
     addModuleButtonIsDrawn = false;
+    buttonAction = ModuleButtonAction::None;
     moduleNames = { Modules::Reverb, Modules::Compressor, Modules::Equalizer };
     currentModules = {};
     moduleCount = 0;
