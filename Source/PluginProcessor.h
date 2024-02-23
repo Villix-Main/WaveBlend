@@ -26,6 +26,8 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
+    void BreakIt();
+
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
@@ -60,6 +62,7 @@ private:
 
     void parameterChanged(const String& parameterID, float newValue);
     void setReverbParams();
+    void setCompressorParams();
     
     // Current UIState of plugin
     UIState currentState;
@@ -98,9 +101,11 @@ private:
 
     AudioSampleBuffer wBuffer;
 
-    
+    int* nump = nullptr;
     dsp::Reverb reverb;
     dsp::Reverb::Parameters revParams;
+
+    dsp::Compressor<float> compressor;
 
 
     //==============================================================================

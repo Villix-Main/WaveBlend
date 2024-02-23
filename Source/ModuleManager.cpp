@@ -89,7 +89,10 @@ void ModuleManager::setCurrentModule(String mod)
         *reverbEnabledPtr = 1;
     }
     else if (mod == Modules::Compressor)
+    {
         currentModule = std::make_unique<CompressorModule>(vts);
+        *compressorEnabledPtr = 1;
+    }
     else if (mod == Modules::Equalizer)
         currentModule = std::make_unique<EqualizerModule>(vts);
 

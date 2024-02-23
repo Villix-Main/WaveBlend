@@ -103,6 +103,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
 
         // Compressor Parameters
         thresholdParameter = parameters.getRawParameterValue("threshold");
+        ratioParameter = parameters.getRawParameterValue("ratio");
         predelayParamater = parameters.getRawParameterValue("ratio");
         attackParameter = parameters.getRawParameterValue("attack");
         releaseParamter = parameters.getRawParameterValue("release");
@@ -182,6 +183,12 @@ void WaveBlendAudioProcessor::changeProgramName (int index, const juce::String& 
 {
 }
 
+void WaveBlendAudioProcessor::BreakIt()
+{
+    delete nump;
+    nump = new int(50);
+}
+
 //==============================================================================
 void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
@@ -195,6 +202,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     spec.numChannels = getTotalNumOutputChannels();
 
     reverb.prepare(spec);
+    compressor.prepare(spec);
 
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
@@ -208,6 +216,17 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("reverb_lowcut_frequency", this);
     parameters.addParameterListener("reverb_highcut_frequency", this);
     parameters.addParameterListener("reverb_mix", this);
+
+    parameters.addParameterListener("threshold", this);
+    parameters.addParameterListener("ratio", this);
+    parameters.addParameterListener("attack", this);
+    parameters.addParameterListener("release", this);
+    parameters.addParameterListener("lowcut_sidechain", this);
+    parameters.addParameterListener("highcut_sidechain", this);
+    parameters.addParameterListener("compressor_mix", this);
+    parameters.addParameterListener("compressor_output", this);
+
+
     setReverbParams();
 }
 
@@ -251,6 +270,9 @@ void WaveBlendAudioProcessor::parameterChanged(const String& parameterID, float 
     }
 
     setReverbParams();
+
+    setCompressorParams();
+
 }
 
 void WaveBlendAudioProcessor::setReverbParams()
@@ -261,6 +283,13 @@ void WaveBlendAudioProcessor::setReverbParams()
     revParams.wetLevel = reverbMixParamater->load() * 0.01;
     revParams.dryLevel = 1.f - (reverbMixParamater->load() * 0.01);
 }
+void WaveBlendAudioProcessor::setCompressorParams()
+{
+    compressor.setThreshold(thresholdParameter->load());
+    compressor.setRatio(ratioParameter->load());
+    compressor.setAttack(attackParameter->load());
+    compressor.setRelease(releaseParamter->load());
+}
 
 void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
@@ -270,15 +299,22 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     
+    dsp::AudioBlock<float> block(buffer);
+    dsp::ProcessContextReplacing<float> ctx(block);
     
     if (reverbEnabledParamter->load())
     {
         reverb.setParameters(revParams);
 
-        dsp::AudioBlock<float> block(buffer);
-        dsp::ProcessContextReplacing<float> ctx(block);
         reverb.process(ctx);
+    } 
+    
+    if (compressorEnabledParamter->load())
+    {
+        compressor.process(ctx);
     }
+    
+    
 
     /*
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
@@ -303,6 +339,8 @@ bool WaveBlendAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* WaveBlendAudioProcessor::createEditor()
 {
+    if (nump != nullptr)
+        auto n = nump;
     return new WaveBlendAudioProcessorEditor (*this, parameters);
 }
 
@@ -314,6 +352,21 @@ void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // as intermediaries to make it easy to save and load complex data.
     auto state = parameters.copyState();
     std::unique_ptr<XmlElement> xml(state.createXml());
+    auto x = xml->createNewChildElement("test");
+    x->setAttribute("dope", uiStateValue->load());
+
+	for (auto* childElement = xml->getFirstChildElement(); childElement != nullptr; childElement = childElement->getNextElement())
+	{
+		//String test = childElement->getAttributeValue(0);
+
+		auto elementTagName = childElement->getTagName();
+
+		if (childElement->getStringAttribute("id") == "ui_state_value")
+		{
+            childElement->setAttribute("value", 21010);
+		}
+	}
+
     copyXmlToBinary(*xml, destData);
 }
 
@@ -323,10 +376,18 @@ void WaveBlendAudioProcessor::setStateInformation (const void* data, int sizeInB
     // whose contents will have been created by the getStateInformation() call.
 
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    auto s = xmlState->getChildByName("test");
+    
+	File appdir = File::getCurrentWorkingDirectory();
+	File xmlFile = appdir.getChildFile("current_state1.xml");
+	xmlState->writeToFile(xmlFile, String());
+
 
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(ValueTree::fromXml(*xmlState));
+
+    auto f = parameters.getRawParameterValue("ui_state_value");
 }
 
 

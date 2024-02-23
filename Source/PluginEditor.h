@@ -133,7 +133,7 @@ private:
 /**
 */
 class WaveBlendAudioProcessorEditor  : public juce::AudioProcessorEditor,
-    public ChangeListener
+    public ChangeListener, private AudioProcessorValueTreeState::Listener
 {
 public:
     WaveBlendAudioProcessorEditor (WaveBlendAudioProcessor&, AudioProcessorValueTreeState& vts);
@@ -150,6 +150,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     WaveBlendAudioProcessor& audioProcessor;
+
+    void parameterChanged(const String& parameterID, float newValue);
 
     // Look And Feel of Plugin
     WaveBlendLookAndFeel lookAndFeel;

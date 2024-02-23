@@ -65,15 +65,25 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (860, 560);
+    audioProcessor.BreakIt();
+
+    vts.addParameterListener("ui_state_value", this);
 }
 
 WaveBlendAudioProcessorEditor::~WaveBlendAudioProcessorEditor()
 {
     UIState cs(moduleButtons.getCurrentModule(), moduleButtons.getCurrentModules());
     stateXMLReader.setUIState(cs);
-    
+
     uiStateStore.SaveState(cs);
+    audioProcessor.BreakIt();
 }
+
+void WaveBlendAudioProcessorEditor::parameterChanged(const String& parameterID, float newValue)
+{
+    moduleButtons.renderFromState(uiStateStore.loadState());
+}
+
 
 //==============================================================================
 void WaveBlendAudioProcessorEditor::paint (juce::Graphics& g)

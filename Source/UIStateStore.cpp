@@ -46,14 +46,13 @@ void UIStateStore::SaveState(UIState& cs)
 	moduleStr.append(String(currentModuleData.index), 1);
 
 	*UIStateValPtr = moduleStr.getFloatValue();
-	
-	vts.state.setProperty("ui_state_value", moduleStr.getFloatValue(), nullptr);	
 }
 
 
 UIState UIStateStore::loadState()
 {
 	int uiStateValTemp = UIStateValPtr->load();
+
 	if (uiStateValTemp <= 0)
 		return UIState();
 
