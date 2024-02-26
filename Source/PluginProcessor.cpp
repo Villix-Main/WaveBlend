@@ -363,7 +363,7 @@ void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 
 		if (childElement->getStringAttribute("id") == "ui_state_value")
 		{
-            childElement->setAttribute("value", 21010);
+            childElement->setAttribute("value", *uiStateValue);
 		}
 	}
 
@@ -381,6 +381,7 @@ void WaveBlendAudioProcessor::setStateInformation (const void* data, int sizeInB
 	File appdir = File::getCurrentWorkingDirectory();
 	File xmlFile = appdir.getChildFile("current_state1.xml");
 	xmlState->writeToFile(xmlFile, String());
+    double x = 0;
 
 
     if (xmlState.get() != nullptr)

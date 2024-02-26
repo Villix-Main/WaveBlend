@@ -21,6 +21,7 @@ ModuleButtonsComponent::ModuleButtonsComponent()
     buttonAction = ModuleButtonAction::None;
     moduleNames = { Modules::Reverb, Modules::Compressor, Modules::Equalizer };
     currentModules = {};
+	moduleButtons.clear();
     moduleCount = 0;
     addModuleButtonIndex = 0;
     currentModule.index = -1;
@@ -34,6 +35,15 @@ ModuleButtonsComponent::ModuleButtonsComponent()
 
 void ModuleButtonsComponent::renderFromState(UIState& cs)
 {
+	addModuleButtonIsDrawn = false;
+	buttonAction = ModuleButtonAction::None;
+	moduleNames = { Modules::Reverb, Modules::Compressor, Modules::Equalizer };
+	currentModules = {};
+    moduleButtons.clear();
+	moduleCount = 0;
+	addModuleButtonIndex = 0;
+	currentModule.index = -1;
+
     currentModules.addArray(cs.getCurrentModules()); 
 
     if (currentModules.size() > 0)
@@ -62,9 +72,9 @@ void ModuleButtonsComponent::renderFromState(UIState& cs)
             addModuleButtonIsDrawn = true;
 
 
+        drawAddModuleButton();
         resized();
     }
-    drawAddModuleButton();
 }
 
 
@@ -208,8 +218,12 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
 
 
                 }
-                
             }
+            else  
+            {
+            }
+
+
             moduleToRemove = moduleButtons[i]->getButtonText();
             sendChangeMessage();
 
@@ -217,6 +231,8 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             
             moduleButtons[i].reset();
             moduleButtons.erase(moduleButtons.begin() + i);
+			currentModule.index--;
+
             
             if (buttonAction == ModuleButtonAction::None)
             {

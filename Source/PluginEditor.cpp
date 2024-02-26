@@ -65,7 +65,6 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (860, 560);
-    audioProcessor.BreakIt();
 
     vts.addParameterListener("ui_state_value", this);
 }
@@ -76,11 +75,12 @@ WaveBlendAudioProcessorEditor::~WaveBlendAudioProcessorEditor()
     stateXMLReader.setUIState(cs);
 
     uiStateStore.SaveState(cs);
-    audioProcessor.BreakIt();
 }
 
 void WaveBlendAudioProcessorEditor::parameterChanged(const String& parameterID, float newValue)
 {
+    auto x = newValue;
+    
     moduleButtons.renderFromState(uiStateStore.loadState());
 }
 
