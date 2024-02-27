@@ -15,7 +15,7 @@
 ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
     decaySlider("Decay", 0.2, 15),
     predelaySlider("Predelay", 0, 500),
-    distanceSlider("Distance", 0, 100),
+    dampingSlider("Damping", 0, 100),
     widthSlider("Width", 0, 100),
     lowCutSlider("Low Cut", 20, 2000),
     highCutSlider("High Cut", 200, 20000),
@@ -32,8 +32,8 @@ ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
     predelayAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "predelay", predelaySlider));
 
     // Distance Slider
-    addAndMakeVisible(distanceSlider);
-    distanceAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "distance", distanceSlider));
+    addAndMakeVisible(dampingSlider);
+    dampingAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "damping", dampingSlider));
 
     // Width Slider
     addAndMakeVisible(widthSlider);
@@ -65,7 +65,7 @@ void ReverbModule::resized()
     
     decaySlider.setBounds(61, 40, 85, 115);
     predelaySlider.setBounds(61, 197, 85, 115);
-    distanceSlider.setBounds(240, 40, 85, 115);
+    dampingSlider.setBounds(240, 40, 85, 115);
     widthSlider.setBounds(240, 197, 85, 115);
 
     eqLabel.setBounds(390, 20, 143, 20);

@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "UIState.h"
+#include "SimpleFilter.h"
 
 //==============================================================================
 /**
@@ -79,7 +80,7 @@ private:
     // Reverb Module Parameters
     std::atomic<float>* decayParamater = nullptr;
     std::atomic<float>* predelayParamater = nullptr;
-    std::atomic<float>* distanceParamater = nullptr;
+    std::atomic<float>* dampingParameter = nullptr;
     std::atomic<float>* widthParamater = nullptr;
     std::atomic<float>* reverbLowCutParamater = nullptr;
     std::atomic<float>* reverbHighCutParamater = nullptr;
@@ -106,6 +107,13 @@ private:
     dsp::Reverb::Parameters revParams;
 
     dsp::Compressor<float> compressor;
+
+    dsp::Limiter<float> finalLimiter;
+
+    SimpleFilter filter;
+
+    dsp::DryWetMixer<float> reverbMixer;
+    
 
 
     //==============================================================================

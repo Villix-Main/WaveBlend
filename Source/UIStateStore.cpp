@@ -73,11 +73,11 @@ UIState UIStateStore::loadState()
 	int currentModuleVal = String::charToString(uiStateVal[amountOfModules + 1]).getIntValue();
 
 	ModuleButtonData currentModule;
-	if (uiStateVal[currentModuleVal] == '1')
+	if (currentModuleVal == 1)
 		currentModule.moduleName = Modules::Reverb;
-	else if (uiStateVal[currentModuleVal] == '2')
+	else if (currentModuleVal == 2)
 		currentModule.moduleName = Modules::Compressor;
-	else if (uiStateVal[currentModuleVal] == '3')
+	else if (currentModuleVal == 3)
 		currentModule.moduleName = Modules::Equalizer;
 	currentModule.index = String::charToString(uiStateVal[amountOfModules + 2]).getIntValue();
 

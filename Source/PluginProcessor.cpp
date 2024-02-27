@@ -44,7 +44,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             NormalisableRange{0.2f, 15.f, 0.05f}, 2.f),
             std::make_unique<AudioParameterFloat>("predelay", "Predelay",
             NormalisableRange{0.f, 500.f, 1.f}, 0.f),
-            std::make_unique<AudioParameterFloat>("distance", "Distance",
+            std::make_unique<AudioParameterFloat>("damping", "Damping",
             NormalisableRange{0.f, 100.f, 1.f}, 0.f),
             std::make_unique<AudioParameterFloat>("width", "width",
             NormalisableRange{0.f, 100.f, 1.f}, 50.f),
@@ -65,7 +65,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterFloat>("release", "Release",
             NormalisableRange{2.f, 500.f, 0.5f}, 50.f),
             std::make_unique<AudioParameterFloat>("lowcut_sidechain", "Lowcut Frequency",
-            NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
+            NormalisableRange{21.f, 2000.f, 1.f, 0.2f, false}, 20.f),
             std::make_unique<AudioParameterFloat>("highcut_sidechain", "Highcut Frequency",
             NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
             std::make_unique<AudioParameterFloat>("compressor_mix", "Mix",
@@ -95,7 +95,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
         // Reverb Parameters
         decayParamater = parameters.getRawParameterValue("decay");
         predelayParamater = parameters.getRawParameterValue("predelay");
-        distanceParamater = parameters.getRawParameterValue("distance");
+        dampingParameter = parameters.getRawParameterValue("damping");
         widthParamater = parameters.getRawParameterValue("width");
         reverbLowCutParamater = parameters.getRawParameterValue("reverb_lowcut_frequency");
         reverbHighCutParamater = parameters.getRawParameterValue("reverb_highcut_frequency");
@@ -203,6 +203,13 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     reverb.prepare(spec);
     compressor.prepare(spec);
+    finalLimiter.prepare(spec);
+    reverbMixer.prepare(spec);
+
+    finalLimiter.setRelease(50);
+    finalLimiter.setThreshold(-0.03);
+
+    filter.setSampleRate(sampleRate);
 
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
@@ -211,7 +218,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     parameters.addParameterListener("decay", this);
     parameters.addParameterListener("predelay", this);
-    parameters.addParameterListener("distance", this);
+    parameters.addParameterListener("damping", this);
     parameters.addParameterListener("width", this);
     parameters.addParameterListener("reverb_lowcut_frequency", this);
     parameters.addParameterListener("reverb_highcut_frequency", this);
@@ -277,11 +284,12 @@ void WaveBlendAudioProcessor::parameterChanged(const String& parameterID, float 
 
 void WaveBlendAudioProcessor::setReverbParams()
 {
-    revParams.damping = 0.7f;
+    revParams.damping = jmap(dampingParameter->load(), 0.f, 100.f, 0.f, 1.0f);
     revParams.roomSize = jmap(decayParamater->load(), 0.2f, 15.f, 0.f, 1.0f);
     revParams.width = jmap(widthParamater->load(), 0.f, 100.f, 0.f, 1.0f);
-    revParams.wetLevel = reverbMixParamater->load() * 0.01;
-    revParams.dryLevel = 1.f - (reverbMixParamater->load() * 0.01);
+    revParams.wetLevel = 1.0;
+    revParams.dryLevel = 0.0;
+    //revParams.dryLevel = 1.f - (reverbMixParamater->load() * 0.01);
 }
 void WaveBlendAudioProcessor::setCompressorParams()
 {
@@ -299,6 +307,17 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     
+
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear (i, 0, buffer.getNumSamples());
+    
+    AudioBuffer<float> revBuff;
+    revBuff.makeCopyOf(buffer, false);
+
+    dsp::AudioBlock<float> revBlock(revBuff);
+    dsp::ProcessContextReplacing<float> revCtx(revBlock);
+
+
     dsp::AudioBlock<float> block(buffer);
     dsp::ProcessContextReplacing<float> ctx(block);
     
@@ -306,21 +325,27 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     {
         reverb.setParameters(revParams);
 
-        reverb.process(ctx);
+        reverb.process(revCtx);
+		filter.setCutoffFrequency(reverbLowCutParamater->load());
+		filter.processBlock(revBuff, midiMessages, true);
     } 
     
     if (compressorEnabledParamter->load())
     {
         compressor.process(ctx);
     }
-    
-    
 
+    reverbMixer.pushDrySamples(revCtx.getOutputBlock());
+    reverbMixer.setWetMixProportion(1.f - (reverbMixParamater->load() * 0.01));
+    reverbMixer.setWetLatency(getLatencySamples());
+    reverbMixer.setMixingRule(dsp::DryWetMixingRule::linear);
+    reverbMixer.mixWetSamples(ctx.getOutputBlock());
+    
+    /*filter.setCutoffFrequency(500);
+    filter.processBlock(buffer, midiMessages);*/
+
+    finalLimiter.process(ctx);
     /*
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-
-    
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);

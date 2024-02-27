@@ -33,8 +33,8 @@ private:
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> predelayAttachment;
 
     // Distance Slider
-    ModuleSlider distanceSlider;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> distanceAttachment;
+    ModuleSlider dampingSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> dampingAttachment;
 
     // Stereo Width Slider
     ModuleSlider widthSlider;

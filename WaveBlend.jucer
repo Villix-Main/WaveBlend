@@ -17,6 +17,9 @@
       </GROUP>
     </GROUP>
     <GROUP id="{55F6F1F6-8F3B-0537-6DCC-8EC2AF2B3976}" name="Source">
+      <FILE id="wGdtKU" name="SimpleFilter.cpp" compile="1" resource="0"
+            file="Source/SimpleFilter.cpp"/>
+      <FILE id="ZyrN9N" name="SimpleFilter.h" compile="0" resource="0" file="Source/SimpleFilter.h"/>
       <FILE id="dlm9d0" name="UIStateStore.cpp" compile="1" resource="0"
             file="Source/UIStateStore.cpp"/>
       <FILE id="iHP1dS" name="UIStateStore.h" compile="0" resource="0" file="Source/UIStateStore.h"/>
