@@ -102,7 +102,6 @@ private:
 
     AudioSampleBuffer wBuffer;
 
-    int* nump = nullptr;
     dsp::Reverb reverb;
     dsp::Reverb::Parameters revParams;
 

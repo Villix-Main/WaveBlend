@@ -183,11 +183,6 @@ void WaveBlendAudioProcessor::changeProgramName (int index, const juce::String& 
 {
 }
 
-void WaveBlendAudioProcessor::BreakIt()
-{
-    delete nump;
-    nump = new int(50);
-}
 
 //==============================================================================
 void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
@@ -301,7 +296,6 @@ void WaveBlendAudioProcessor::setCompressorParams()
 
 void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    
 
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -326,8 +320,25 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         reverb.setParameters(revParams);
 
         reverb.process(revCtx);
-		filter.setCutoffFrequency(reverbLowCutParamater->load());
-		filter.processBlock(revBuff, midiMessages, true);
+
+        
+        AudioBuffer<float> highPassBuff;
+        highPassBuff.makeCopyOf(revBuff, false);
+
+		filter.setCutoffFrequency(reverbHighCutParamater->load());
+		filter.processBlock(revBuff, midiMessages, false);
+
+        filter.setCutoffFrequency(reverbLowCutParamater->load());
+        filter.processBlock(highPassBuff, midiMessages, true);
+
+        
+
+
+		reverbMixer.pushDrySamples(revCtx.getOutputBlock());
+		reverbMixer.setWetMixProportion(1.f - (reverbMixParamater->load() * 0.01));
+		reverbMixer.setWetLatency(getLatencySamples());
+		reverbMixer.setMixingRule(dsp::DryWetMixingRule::linear);
+		reverbMixer.mixWetSamples(ctx.getOutputBlock());
     } 
     
     if (compressorEnabledParamter->load())
@@ -335,11 +346,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         compressor.process(ctx);
     }
 
-    reverbMixer.pushDrySamples(revCtx.getOutputBlock());
-    reverbMixer.setWetMixProportion(1.f - (reverbMixParamater->load() * 0.01));
-    reverbMixer.setWetLatency(getLatencySamples());
-    reverbMixer.setMixingRule(dsp::DryWetMixingRule::linear);
-    reverbMixer.mixWetSamples(ctx.getOutputBlock());
+    
     
     /*filter.setCutoffFrequency(500);
     filter.processBlock(buffer, midiMessages);*/
@@ -364,8 +371,6 @@ bool WaveBlendAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* WaveBlendAudioProcessor::createEditor()
 {
-    if (nump != nullptr)
-        auto n = nump;
     return new WaveBlendAudioProcessorEditor (*this, parameters);
 }
 
@@ -377,8 +382,6 @@ void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // as intermediaries to make it easy to save and load complex data.
     auto state = parameters.copyState();
     std::unique_ptr<XmlElement> xml(state.createXml());
-    auto x = xml->createNewChildElement("test");
-    x->setAttribute("dope", uiStateValue->load());
 
 	for (auto* childElement = xml->getFirstChildElement(); childElement != nullptr; childElement = childElement->getNextElement())
 	{
@@ -401,19 +404,10 @@ void WaveBlendAudioProcessor::setStateInformation (const void* data, int sizeInB
     // whose contents will have been created by the getStateInformation() call.
 
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-    auto s = xmlState->getChildByName("test");
-    
-	File appdir = File::getCurrentWorkingDirectory();
-	File xmlFile = appdir.getChildFile("current_state1.xml");
-	xmlState->writeToFile(xmlFile, String());
-    double x = 0;
-
 
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(ValueTree::fromXml(*xmlState));
-
-    auto f = parameters.getRawParameterValue("ui_state_value");
 }
 
 
