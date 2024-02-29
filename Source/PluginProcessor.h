@@ -27,7 +27,6 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
-    void BreakIt();
 
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
@@ -71,7 +70,7 @@ private:
     std::atomic<float>* compressorEnabledParamter = nullptr;
     std::atomic<float>* equalizerEnabledParamter = nullptr;
     std::atomic<float>* uiStateValue = nullptr;
-
+    bool lastReverbEnableState = false;
 
     // Main Plugin Parameters
     std::atomic<float>* pluginOutputParameter = nullptr;
@@ -107,13 +106,16 @@ private:
 
     dsp::Compressor<float> compressor;
 
-    dsp::Limiter<float> finalLimiter;
 
-    SimpleFilter filter;
+    SimpleFilter reverbLowPassFilter;
+    SimpleFilter reverbHighPassFilter;
 
+    // Mixers
     dsp::DryWetMixer<float> reverbMixer;
+    dsp::DryWetMixer<float> compressorMixer;
     
-
+    // Main limiter
+    dsp::Limiter<float> finalLimiter;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessor)

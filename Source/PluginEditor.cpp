@@ -79,7 +79,8 @@ WaveBlendAudioProcessorEditor::~WaveBlendAudioProcessorEditor()
 
 void WaveBlendAudioProcessorEditor::parameterChanged(const String& parameterID, float newValue)
 {
-    auto x = newValue;
+    if (newValue <= 0)
+        return;
     
     moduleButtons.renderFromState(uiStateStore.loadState());
 }

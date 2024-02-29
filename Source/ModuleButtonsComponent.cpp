@@ -72,9 +72,10 @@ void ModuleButtonsComponent::renderFromState(UIState& cs)
             addModuleButtonIsDrawn = true;
 
 
-        drawAddModuleButton();
-        resized();
     }
+
+    drawAddModuleButton();
+    resized();
 }
 
 

@@ -14,11 +14,15 @@ UIStateStore::UIStateStore(AudioProcessorValueTreeState& vts)
 	: vts(vts)
 {
 	UIStateValPtr = vts.getRawParameterValue("ui_state_value");
+	ReverbEnabledPtr = vts.getRawParameterValue("reverb_enabled");
 }
 
 
 void UIStateStore::SaveState(UIState& cs)
 {
+	if (cs.getCurrentModules().size() <= 0)
+		return;
+
 	String moduleStr;
 
 	moduleStr.append(String(cs.getCurrentModules().size()), 1);
@@ -52,6 +56,9 @@ void UIStateStore::SaveState(UIState& cs)
 UIState UIStateStore::loadState()
 {
 	int uiStateValTemp = UIStateValPtr->load();
+
+	if (uiStateValTemp <= 0)
+		return UIState();
 
 	if (uiStateValTemp <= 0)
 		return UIState();

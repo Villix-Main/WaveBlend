@@ -25,5 +25,6 @@ public:
 private:
 	//UIState currentState;
 	std::atomic<float>* UIStateValPtr = nullptr;
+	std::atomic<float>* ReverbEnabledPtr = nullptr;
 	AudioProcessorValueTreeState& vts;
 };

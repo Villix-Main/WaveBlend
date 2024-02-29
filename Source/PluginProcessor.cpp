@@ -30,7 +30,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterBool>("compressor_enabled", "Compressor Enabled", false),
             std::make_unique<AudioParameterBool>("equalizer_enabled", "Equalizer Enabled", false),
             std::make_unique<AudioParameterFloat>("ui_state_value", "UI State Value", 
-            NormalisableRange{0.f, 999999999.f, 1.f}, 1110.f),
+            NormalisableRange{0.f, 999999999.f, 1.f}, 0.f),
 
             /* Main Plugin Parameters */
             std::make_unique<AudioParameterFloat>("plugin_output", "Output",
@@ -200,11 +200,13 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     compressor.prepare(spec);
     finalLimiter.prepare(spec);
     reverbMixer.prepare(spec);
+    compressorMixer.prepare(spec);
 
     finalLimiter.setRelease(50);
     finalLimiter.setThreshold(-0.03);
 
-    filter.setSampleRate(sampleRate);
+    reverbLowPassFilter.setSampleRate(sampleRate);
+    reverbHighPassFilter.setSampleRate(sampleRate);
 
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
@@ -228,7 +230,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("compressor_mix", this);
     parameters.addParameterListener("compressor_output", this);
 
-
+    //*reverbEnabledParamter = lastReverbEnableState;
     setReverbParams();
 }
 
@@ -236,6 +238,7 @@ void WaveBlendAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+    lastReverbEnableState = reverbEnabledParamter->load();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -296,7 +299,6 @@ void WaveBlendAudioProcessor::setCompressorParams()
 
 void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -308,8 +310,14 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     AudioBuffer<float> revBuff;
     revBuff.makeCopyOf(buffer, false);
 
+    AudioBuffer<float> compressorBuff;
+    compressorBuff.makeCopyOf(buffer, false);
+
     dsp::AudioBlock<float> revBlock(revBuff);
     dsp::ProcessContextReplacing<float> revCtx(revBlock);
+
+    dsp::AudioBlock<float> compressorBlock(compressorBuff);
+    dsp::ProcessContextReplacing<float> compressorCtx(compressorBlock);
 
 
     dsp::AudioBlock<float> block(buffer);
@@ -320,20 +328,13 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         reverb.setParameters(revParams);
 
         reverb.process(revCtx);
-
-        
-        AudioBuffer<float> highPassBuff;
-        highPassBuff.makeCopyOf(revBuff, false);
-
-		filter.setCutoffFrequency(reverbHighCutParamater->load());
-		filter.processBlock(revBuff, midiMessages, false);
-
-        filter.setCutoffFrequency(reverbLowCutParamater->load());
-        filter.processBlock(highPassBuff, midiMessages, true);
-
         
 
-
+		reverbLowPassFilter.setCutoffFrequency(reverbHighCutParamater->load());
+        reverbLowPassFilter.processBlock(revBuff, midiMessages, false);
+        reverbHighPassFilter.setCutoffFrequency(reverbLowCutParamater->load());
+        reverbHighPassFilter.processBlock(revBuff, midiMessages, true);
+        
 		reverbMixer.pushDrySamples(revCtx.getOutputBlock());
 		reverbMixer.setWetMixProportion(1.f - (reverbMixParamater->load() * 0.01));
 		reverbMixer.setWetLatency(getLatencySamples());
@@ -343,7 +344,14 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     
     if (compressorEnabledParamter->load())
     {
-        compressor.process(ctx);
+        compressor.process(compressorCtx);
+
+        compressorMixer.pushDrySamples(compressorCtx.getOutputBlock());
+        compressorMixer.setWetMixProportion(1.f - (compressorMixParameter->load() * 0.01));
+        compressorMixer.setWetLatency(getLatencySamples());
+        compressorMixer.setMixingRule(dsp::DryWetMixingRule::balanced);
+        compressorMixer.mixWetSamples(ctx.getOutputBlock());
+        
     }
 
     
@@ -382,7 +390,7 @@ void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // as intermediaries to make it easy to save and load complex data.
     auto state = parameters.copyState();
     std::unique_ptr<XmlElement> xml(state.createXml());
-
+    auto t = reverbEnabledParamter->load();
 	for (auto* childElement = xml->getFirstChildElement(); childElement != nullptr; childElement = childElement->getNextElement())
 	{
 		//String test = childElement->getAttributeValue(0);
@@ -393,6 +401,12 @@ void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 		{
             childElement->setAttribute("value", *uiStateValue);
 		}
+
+        if (childElement->getStringAttribute("id") == "reverb_enabled")
+        {
+            childElement->setAttribute("value", *reverbEnabledParamter);
+        }
+
 	}
 
     copyXmlToBinary(*xml, destData);
@@ -409,7 +423,6 @@ void WaveBlendAudioProcessor::setStateInformation (const void* data, int sizeInB
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(ValueTree::fromXml(*xmlState));
 }
-
 
 //==============================================================================
 // This creates new instances of the plugin..
