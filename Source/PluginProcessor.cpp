@@ -198,9 +198,10 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     reverb.prepare(spec);
     compressor.prepare(spec);
-    finalLimiter.prepare(spec);
+    pluginMixer.prepare(spec);
     reverbMixer.prepare(spec);
     compressorMixer.prepare(spec);
+    finalLimiter.prepare(spec);
 
     finalLimiter.setRelease(50);
     finalLimiter.setThreshold(-0.03);
@@ -307,21 +308,22 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
-    AudioBuffer<float> revBuff;
-    revBuff.makeCopyOf(buffer, false);
+    
+    AudioBuffer<float> wetBuff;
+    wetBuff.makeCopyOf(buffer, false);
 
-    AudioBuffer<float> compressorBuff;
-    compressorBuff.makeCopyOf(buffer, false);
+    AudioBuffer<float> revBuff;
+    revBuff.makeCopyOf(wetBuff, false);
+
+
+    dsp::AudioBlock<float> wetBlock(wetBuff);
+    dsp::ProcessContextReplacing<float> wetCtx(wetBlock);
 
     dsp::AudioBlock<float> revBlock(revBuff);
     dsp::ProcessContextReplacing<float> revCtx(revBlock);
 
-    dsp::AudioBlock<float> compressorBlock(compressorBuff);
-    dsp::ProcessContextReplacing<float> compressorCtx(compressorBlock);
-
-
-    dsp::AudioBlock<float> block(buffer);
-    dsp::ProcessContextReplacing<float> ctx(block);
+    dsp::AudioBlock<float> dryBlock(buffer);
+    dsp::ProcessContextReplacing<float> dryCtx(dryBlock);
     
     if (reverbEnabledParamter->load())
     {
@@ -339,9 +341,15 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 		reverbMixer.setWetMixProportion(1.f - (reverbMixParamater->load() * 0.01));
 		reverbMixer.setWetLatency(getLatencySamples());
 		reverbMixer.setMixingRule(dsp::DryWetMixingRule::linear);
-		reverbMixer.mixWetSamples(ctx.getOutputBlock());
+		reverbMixer.mixWetSamples(wetCtx.getOutputBlock());
     } 
     
+	AudioBuffer<float> compressorBuff;
+	compressorBuff.makeCopyOf(wetBuff, false);
+
+	dsp::AudioBlock<float> compressorBlock(compressorBuff);
+	dsp::ProcessContextReplacing<float> compressorCtx(compressorBlock);
+
     if (compressorEnabledParamter->load())
     {
         compressor.process(compressorCtx);
@@ -350,16 +358,22 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         compressorMixer.setWetMixProportion(1.f - (compressorMixParameter->load() * 0.01));
         compressorMixer.setWetLatency(getLatencySamples());
         compressorMixer.setMixingRule(dsp::DryWetMixingRule::balanced);
-        compressorMixer.mixWetSamples(ctx.getOutputBlock());
-        
+        compressorMixer.mixWetSamples(wetCtx.getOutputBlock());    
     }
 
-    
+
+    pluginMixer.pushDrySamples(wetCtx.getOutputBlock());
+    pluginMixer.setWetMixProportion(1.f - (pluginMixParameter->load() * 0.01));
+    pluginMixer.setWetLatency(getLatencySamples());
+    pluginMixer.setMixingRule(dsp::DryWetMixingRule::linear);
+    pluginMixer.mixWetSamples(dryCtx.getOutputBlock());
+        
+
     
     /*filter.setCutoffFrequency(500);
     filter.processBlock(buffer, midiMessages);*/
 
-    finalLimiter.process(ctx);
+    finalLimiter.process(dryCtx);
     /*
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {

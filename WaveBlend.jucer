@@ -57,6 +57,10 @@
               file="Source/RemoveModuleLabel.cpp"/>
         <FILE id="MHvG9q" name="RemoveModuleLabel.h" compile="0" resource="0"
               file="Source/RemoveModuleLabel.h"/>
+        <FILE id="tFQRYW" name="SoloModuleLabel.cpp" compile="1" resource="0"
+              file="Source/SoloModuleLabel.cpp"/>
+        <FILE id="SUtLp8" name="SoloModuleLabel.h" compile="0" resource="0"
+              file="Source/SoloModuleLabel.h"/>
         <FILE id="goWbfv" name="SwitchModuleLabel.cpp" compile="1" resource="0"
               file="Source/SwitchModuleLabel.cpp"/>
         <FILE id="FYlJud" name="SwitchModuleLabel.h" compile="0" resource="0"

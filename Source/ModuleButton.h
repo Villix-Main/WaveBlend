@@ -14,6 +14,7 @@
 #include "RemoveModuleLabel.h"
 #include "SwitchModuleLabel.h"
 #include "Modules.h"
+#include "SoloModuleLabel.h"
 
 class ModuleButton : public TextButton,
     public MouseListener,
@@ -49,6 +50,9 @@ private:
 
     // Label that will be used to switch the module that a module button has
     SwitchModuleLabel switchLabel;
+
+    // Label that will be used to solo a module in plugin
+    SoloModuleLabel soloLabel;
 
     // Enum to determine the action of the button labels
     ModuleButtonAction buttonAction;

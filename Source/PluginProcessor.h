@@ -111,6 +111,7 @@ private:
     SimpleFilter reverbHighPassFilter;
 
     // Mixers
+    dsp::DryWetMixer<float> pluginMixer;
     dsp::DryWetMixer<float> reverbMixer;
     dsp::DryWetMixer<float> compressorMixer;
     

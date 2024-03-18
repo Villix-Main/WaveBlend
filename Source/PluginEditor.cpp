@@ -90,7 +90,7 @@ void WaveBlendAudioProcessorEditor::parameterChanged(const String& parameterID, 
 void WaveBlendAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colour(0xff495D6A));
+    g.fillAll(juce::Colour(WBColors::PrimaryGrey));
 
 
     ColourGradient rectGradient = ColourGradient{
@@ -124,7 +124,7 @@ void WaveBlendAudioProcessorEditor::paint (juce::Graphics& g)
     Path moduleLine;
     moduleLine.addRectangle(25.f, 190, 810, 1);
 
-    g.setColour(Colour(0xff5B7586));
+    g.setColour(Colour(WBColors::SecondaryGrey));
     g.fillPath(moduleLine);
 }
 

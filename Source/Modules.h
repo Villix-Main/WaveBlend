@@ -27,5 +27,6 @@ enum ModuleButtonAction
     Add,
     Switch,
     Remove,
+    Solo,
     None
 };

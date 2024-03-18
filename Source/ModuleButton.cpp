@@ -41,6 +41,9 @@ void ModuleButton::drawLabels()
 
     switchLabel.addChangeListener(this);
     addAndMakeVisible(switchLabel);
+
+    soloLabel.addChangeListener(this);
+    addAndMakeVisible(soloLabel);
 }
 
 
@@ -49,11 +52,14 @@ void ModuleButton::resized()
     auto bounds = getLocalBounds();
     Rectangle<int> removeLabelRect(bounds.getX() + 90, bounds.getY(), 30, 30);
     Rectangle<int> switchLabelRect(bounds.getX() + 5, bounds.getY(), 30, 30);
+    Rectangle<int> soloLabelRect(bounds.getX() + 5, bounds.getY() + 55, 30, 30);
 
     removeLabel.setBounds(removeLabelRect);
     switchLabel.setBounds(switchLabelRect);
+    soloLabel.setBounds(soloLabelRect);
 
     removeLabel.setJustificationType(Justification::centred);
+    soloLabel.setJustificationType(Justification::centred);
     
 }
 
@@ -63,6 +69,8 @@ void ModuleButton::changeListenerCallback(ChangeBroadcaster* source)
         buttonAction = ModuleButtonAction::Remove;
     else if (dynamic_cast<SwitchModuleLabel*>(source))
         buttonAction = ModuleButtonAction::Switch;
+    else if (dynamic_cast<SoloModuleLabel*>(source))
+        buttonAction = ModuleButtonAction::Solo;
 
     sendChangeMessage();
 }
