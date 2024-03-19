@@ -17,7 +17,7 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     moduleManager(vts),
     outputSlider("Output", -20.f, 10.f, 12),
     mixSlider("Mix", 0.f, 100.f, 12),
-    moduleButtons(),
+    moduleButtons(vts),
     uiStateStore(vts)
 
 {

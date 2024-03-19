@@ -69,6 +69,7 @@ private:
     std::atomic<float>* reverbEnabledParamter = nullptr;
     std::atomic<float>* compressorEnabledParamter = nullptr;
     std::atomic<float>* equalizerEnabledParamter = nullptr;
+    std::atomic<float>* currentSoloModuleParameter = nullptr;
     std::atomic<float>* uiStateValue = nullptr;
     bool lastReverbEnableState = false;
 

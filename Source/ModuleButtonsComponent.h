@@ -28,7 +28,7 @@ class ModuleButtonsComponent : public juce::Component,
 {
 public:
     //ModuleButtonsComponent();
-    ModuleButtonsComponent();
+    ModuleButtonsComponent(AudioProcessorValueTreeState& vts);
 
     ~ModuleButtonsComponent() { }
 
@@ -79,8 +79,11 @@ private:
     UIState currentState;
     //UIStateStore uiStateStore;
 
+    std::atomic<float>* currentSoloModulePtr;
+
     void focusOnButton(int index, String modName);
 
     bool existsInCurrentModules(String mod);
     void removeFromCurrentModules(String mod);
+
 };

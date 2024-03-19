@@ -12,7 +12,7 @@
 
 
 
-ModuleButtonsComponent::ModuleButtonsComponent()
+ModuleButtonsComponent::ModuleButtonsComponent(AudioProcessorValueTreeState& vts)
 {
     setLookAndFeel(&lookAndFeel);
 
@@ -25,6 +25,8 @@ ModuleButtonsComponent::ModuleButtonsComponent()
     moduleCount = 0;
     addModuleButtonIndex = 0;
     currentModule.index = -1;
+
+    currentSoloModulePtr = vts.getRawParameterValue("current_solo_module");
  /* 
     if (currentState.getCurrentModules().size() > 0)
     {
@@ -287,6 +289,35 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
                 break;
             }
         }
+        else if (ba == ModuleButtonAction::Solo)
+        {
+            String moduleName = moduleButtons[i]->getButtonText();
+
+            if (moduleName == Modules::Reverb)
+            {
+                if (currentSoloModulePtr->load() == 1)
+                    *currentSoloModulePtr = 0;
+                else
+                    *currentSoloModulePtr = 1;
+
+            }
+            else if (moduleName == Modules::Compressor)
+            {
+				if (currentSoloModulePtr->load() == 2)
+					*currentSoloModulePtr = 0;
+				else
+					*currentSoloModulePtr = 2;
+            }
+            else if (moduleName == Modules::Equalizer)
+            {
+				if (currentSoloModulePtr->load() == 3)
+					*currentSoloModulePtr = 0;
+				else
+					*currentSoloModulePtr = 3;
+            }
+            moduleButtons[i]->setButtonAction(ModuleButtonAction::None);
+
+        }
     }
 }
 
@@ -343,4 +374,5 @@ void ModuleButtonsComponent::removeFromCurrentModules(String mod)
             currentModules.remove(i);
     }
 }
+
 

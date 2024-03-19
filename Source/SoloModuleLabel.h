@@ -19,8 +19,12 @@ class SoloModuleLabel : public Label,
 public:
 	SoloModuleLabel();
 
+	bool isToggled = false;
+	int firstTrigger = 0;
 
 	void mouseDown(const MouseEvent&) override;
 	void mouseEnter(const MouseEvent&) override;
 	void mouseExit(const MouseEvent&) override;
-};
+
+	void setToggle();
+}; 

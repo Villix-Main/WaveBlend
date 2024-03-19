@@ -29,6 +29,8 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterBool>("reverb_enabled", "Reverb Enabled", false),
             std::make_unique<AudioParameterBool>("compressor_enabled", "Compressor Enabled", false),
             std::make_unique<AudioParameterBool>("equalizer_enabled", "Equalizer Enabled", false),
+            std::make_unique<AudioParameterFloat>("current_solo_module", "Current Solo Module", 
+            NormalisableRange{0.f, 4.f, 1.f}, 0.f),
             std::make_unique<AudioParameterFloat>("ui_state_value", "UI State Value", 
             NormalisableRange{0.f, 999999999.f, 1.f}, 0.f),
 
@@ -85,6 +87,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
         reverbEnabledParamter = parameters.getRawParameterValue("reverb_enabled");
         compressorEnabledParamter = parameters.getRawParameterValue("compressor_enabled");
         equalizerEnabledParamter = parameters.getRawParameterValue("equalizer_enabled");
+        currentSoloModuleParameter = parameters.getRawParameterValue("current_solo_module");
         uiStateValue = parameters.getRawParameterValue("ui_state_value");
 
         // Main Plugin Parameters
@@ -212,6 +215,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
     parameters.addParameterListener("equalizer_enabled", this);
+    parameters.addParameterListener("current_solo_module", this);
     parameters.addParameterListener("ui_state_value", this);
 
     parameters.addParameterListener("decay", this);
@@ -325,7 +329,8 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     dsp::AudioBlock<float> dryBlock(buffer);
     dsp::ProcessContextReplacing<float> dryCtx(dryBlock);
     
-    if (reverbEnabledParamter->load())
+    int currentSoloModule = currentSoloModuleParameter->load();
+    if (reverbEnabledParamter->load() && (currentSoloModule == 0 || currentSoloModule == 1))
     {
         reverb.setParameters(revParams);
 
@@ -350,7 +355,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 	dsp::AudioBlock<float> compressorBlock(compressorBuff);
 	dsp::ProcessContextReplacing<float> compressorCtx(compressorBlock);
 
-    if (compressorEnabledParamter->load())
+    if (compressorEnabledParamter->load() && (currentSoloModule == 0 || currentSoloModule == 2))
     {
         compressor.process(compressorCtx);
 
@@ -419,6 +424,16 @@ void WaveBlendAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
         if (childElement->getStringAttribute("id") == "reverb_enabled")
         {
             childElement->setAttribute("value", *reverbEnabledParamter);
+        }
+
+        if (childElement->getStringAttribute("id") == "compressor_enabled")
+        {
+            childElement->setAttribute("value", *compressorEnabledParamter);
+        }
+
+        if (childElement->getStringAttribute("id") == "current_solo_module")
+        {
+            childElement->setAttribute("value", *currentSoloModuleParameter);
         }
 
 	}
