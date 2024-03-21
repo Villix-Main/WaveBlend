@@ -84,14 +84,24 @@ void WaveBlendAudioProcessorEditor::parameterChanged(const String& parameterID, 
     
     moduleButtons.renderFromState(uiStateStore.loadState());
 }
-
+    
 
 //==============================================================================
 void WaveBlendAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colour(WBColors::PrimaryGrey));
+    //g.fillAll(juce::Colour(WBColors::PrimaryGrey));
+    
+	ColourGradient backgroundGradeint = ColourGradient{
+		Colour(0xff495D6A),
+		getLocalBounds().getTopLeft().toFloat(),
+		Colour(0xff252F35),
+		getLocalBounds().getBottomRight().toFloat(),
+		true
+	};
 
+    g.setGradientFill(backgroundGradeint);
+    g.fillAll();
 
     ColourGradient rectGradient = ColourGradient{
         Colour(WBColors::SecondaryGrey),

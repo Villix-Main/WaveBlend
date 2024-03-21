@@ -85,3 +85,8 @@ void ModuleButton::setButtonAction(ModuleButtonAction action)
     this->buttonAction = action;
 }
 
+void ModuleButton::setSoloLabelToggle(bool toggle)
+{
+    soloLabel.setToggle(toggle);
+}
+

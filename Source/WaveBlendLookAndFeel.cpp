@@ -13,7 +13,7 @@
 
 void WaveBlendLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
     float sliderPosProportional, float rotaryStartAngle,
-    float rotaryEndAngle, juce::Slider&) 
+    float rotaryEndAngle, juce::Slider& s) 
 {
     auto radius = (float)juce::jmin(width / 2, height / 2) - 4.0f;
     auto centreX = (float)x + (float)width * 0.5f;
@@ -42,6 +42,8 @@ void WaveBlendLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int
     // Pointer Color
     g.setColour(juce::Colour(0xffC2C0C0));
     g.fillPath(p);
+
+    s.setColour(Slider::textBoxOutlineColourId, Colours::transparentWhite);
 }
 
 void WaveBlendLookAndFeel::drawButtonBackground(Graphics& g, Button& button, const Colour& backgroundColour, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)

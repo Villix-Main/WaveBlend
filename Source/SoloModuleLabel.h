@@ -22,9 +22,12 @@ public:
 	bool isToggled = false;
 	int firstTrigger = 0;
 
+	void setToggle(bool toggle);
+
 	void mouseDown(const MouseEvent&) override;
 	void mouseEnter(const MouseEvent&) override;
 	void mouseExit(const MouseEvent&) override;
 
-	void setToggle();
+private:
+	void setColor();
 }; 

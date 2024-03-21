@@ -35,30 +35,31 @@ void SoloModuleLabel::mouseDown(const MouseEvent& e)
 		isToggled = !isToggled;
 		firstTrigger = 0;
 	}
+
+	setColor();
 }
 
-
-void SoloModuleLabel::setToggle()
+void SoloModuleLabel::setToggle(bool toggle)
 {
-
+	isToggled = toggle;
+	setColor();
 }
-
 
 
 void SoloModuleLabel::mouseEnter(const MouseEvent&)
 {
-	if (!isToggled)
-		this->setColour(0x1000281, WBColors::MoreLightGrey);
-	else
-		this->setColour(0x1000281, Colours::white);
+	this->setColour(0x1000281, WBColors::MoreLightGrey);
 }
 
 void SoloModuleLabel::mouseExit(const MouseEvent&)
 {
+	setColor();
+}
+
+void SoloModuleLabel::setColor()
+{
 	if (!isToggled)
 		this->setColour(0x1000281, Colours::white);
 	else
-		this->setColour(0x1000281, WBColors::MoreLightGrey);
-
+		this->setColour(0x1000281, WBColors::SecondaryGrey);
 }
-

@@ -293,13 +293,16 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
         {
             String moduleName = moduleButtons[i]->getButtonText();
 
+            for (int j = 0; j < moduleButtons.size(); j++)
+                if (j != i)
+                    moduleButtons[j]->setSoloLabelToggle(false);
+
             if (moduleName == Modules::Reverb)
             {
                 if (currentSoloModulePtr->load() == 1)
                     *currentSoloModulePtr = 0;
                 else
                     *currentSoloModulePtr = 1;
-
             }
             else if (moduleName == Modules::Compressor)
             {

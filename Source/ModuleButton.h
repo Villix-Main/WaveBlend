@@ -42,6 +42,7 @@ public:
     ModuleButtonAction getButtonAction();
     void setButtonAction(ModuleButtonAction action);
     
+    void setSoloLabelToggle(bool toggle);
 
 private:
     // Label that will be used to remove a module button from UI

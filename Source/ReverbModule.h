@@ -19,6 +19,7 @@ class ReverbModule : public Component
 public:
     ReverbModule(AudioProcessorValueTreeState& vts);
 
+    void paint(Graphics&) override;
     void resized() override;
 private:
     // Reverb Module Font
@@ -39,6 +40,9 @@ private:
     // Stereo Width Slider
     ModuleSlider widthSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> widthAttachment;
+
+    // EQ Rectangle border
+    Rectangle<int> eqRect;
 
     // EQ Label
     Label eqLabel;

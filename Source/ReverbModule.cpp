@@ -9,6 +9,7 @@
 */
 
 #include "ReverbModule.h"
+#include "WaveBlendColors.h"
  
 
 
@@ -21,7 +22,8 @@ ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
     highCutSlider("High Cut", 200, 20000),
     mixSlider("Mix", 0, 100)
 {
-    f.setHeight(15);
+    f.setHeight(17);
+    f.setBold(true);
 
     // Decay Slider
     addAndMakeVisible(decaySlider);
@@ -58,17 +60,24 @@ ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
     mixAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_mix", mixSlider));
 }
 
+void ReverbModule::paint(Graphics& g)
+{
+    g.setColour(WBColors::MoreLightGrey);
+
+    g.drawRoundedRectangle(eqRect.toFloat(), 10, 1);
+}
+
 void ReverbModule::resized()
 {
     const auto bounds = this->getLocalBounds();
 
-    
     decaySlider.setBounds(61, 40, 85, 115);
     predelaySlider.setBounds(61, 197, 85, 115);
     dampingSlider.setBounds(240, 40, 85, 115);
     widthSlider.setBounds(240, 197, 85, 115);
 
-    eqLabel.setBounds(390, 20, 143, 20);
+	eqRect.setBounds(362, 20, 200, 190);
+	eqLabel.setBounds(390, 27, 143, 20);
     lowCutSlider.setBounds(390, 78, 55, 85);
     highCutSlider.setBounds(478, 78, 55, 85);
 

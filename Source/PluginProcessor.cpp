@@ -235,7 +235,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("compressor_mix", this);
     parameters.addParameterListener("compressor_output", this);
 
-    //*reverbEnabledParamter = lastReverbEnableState;
+    //*reverbEnabledParamter = lastReverbEnableState;   
     setReverbParams();
 }
 
