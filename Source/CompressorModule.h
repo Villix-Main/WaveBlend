@@ -17,6 +17,7 @@ class CompressorModule : public Component
 public:
     CompressorModule(AudioProcessorValueTreeState& vts);
 
+    void paint(Graphics&);
     void resized() override;
 private:
     // Compressor Module Font
@@ -37,6 +38,9 @@ private:
     // Release Slider
     ModuleSlider releaseSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
+
+    // Sidechain EQ Rect
+    Rectangle<int> sidechainRect;
 
     // Sidechain EQ label
     Label sidechainLabel;

@@ -31,6 +31,9 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterBool>("equalizer_enabled", "Equalizer Enabled", false),
             std::make_unique<AudioParameterFloat>("current_solo_module", "Current Solo Module", 
             NormalisableRange{0.f, 4.f, 1.f}, 0.f),
+			std::make_unique<AudioParameterBool>("reverb_bypass", "Reverb Bypass", false),
+			std::make_unique<AudioParameterBool>("compressor_bypass", "Compressor Bypass", false),
+			std::make_unique<AudioParameterBool>("equalizer_bypass", "Equalizer Bypass", false),
             std::make_unique<AudioParameterFloat>("ui_state_value", "UI State Value", 
             NormalisableRange{0.f, 999999999.f, 1.f}, 0.f),
 
@@ -67,7 +70,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
             std::make_unique<AudioParameterFloat>("release", "Release",
             NormalisableRange{2.f, 500.f, 0.5f}, 50.f),
             std::make_unique<AudioParameterFloat>("lowcut_sidechain", "Lowcut Frequency",
-            NormalisableRange{21.f, 2000.f, 1.f, 0.2f, false}, 20.f),
+            NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
             std::make_unique<AudioParameterFloat>("highcut_sidechain", "Highcut Frequency",
             NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
             std::make_unique<AudioParameterFloat>("compressor_mix", "Mix",
@@ -88,6 +91,9 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
         compressorEnabledParamter = parameters.getRawParameterValue("compressor_enabled");
         equalizerEnabledParamter = parameters.getRawParameterValue("equalizer_enabled");
         currentSoloModuleParameter = parameters.getRawParameterValue("current_solo_module");
+        reverbBypassParameter = parameters.getRawParameterValue("reverb_bypass");
+        compressorBypassParameter = parameters.getRawParameterValue("compressor_bypass");
+        equalizerBypassParameter = parameters.getRawParameterValue("equalizer_bypass");
         uiStateValue = parameters.getRawParameterValue("ui_state_value");
 
         // Main Plugin Parameters
@@ -212,10 +218,15 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     reverbLowPassFilter.setSampleRate(sampleRate);
     reverbHighPassFilter.setSampleRate(sampleRate);
 
+    pluginGain.prepare(spec);
+
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
     parameters.addParameterListener("equalizer_enabled", this);
     parameters.addParameterListener("current_solo_module", this);
+    parameters.addParameterListener("reverb_bypass", this);
+    parameters.addParameterListener("compressor_bypass", this);
+    parameters.addParameterListener("equalizer_bypass", this);
     parameters.addParameterListener("ui_state_value", this);
 
     parameters.addParameterListener("decay", this);
@@ -330,7 +341,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     dsp::ProcessContextReplacing<float> dryCtx(dryBlock);
     
     int currentSoloModule = currentSoloModuleParameter->load();
-    if (reverbEnabledParamter->load() && (currentSoloModule == 0 || currentSoloModule == 1))
+    if (reverbEnabledParamter->load() && !reverbBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 1))
     {
         reverb.setParameters(revParams);
 
@@ -355,7 +366,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 	dsp::AudioBlock<float> compressorBlock(compressorBuff);
 	dsp::ProcessContextReplacing<float> compressorCtx(compressorBlock);
 
-    if (compressorEnabledParamter->load() && (currentSoloModule == 0 || currentSoloModule == 2))
+    if (compressorEnabledParamter->load() && !compressorBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 2))
     {
         compressor.process(compressorCtx);
 
@@ -377,6 +388,10 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     
     /*filter.setCutoffFrequency(500);
     filter.processBlock(buffer, midiMessages);*/
+
+    pluginGain.setGainDecibels(pluginOutputParameter->load());
+    pluginGain.process(dryCtx);
+    
 
     finalLimiter.process(dryCtx);
     /*

@@ -80,6 +80,10 @@ private:
     //UIStateStore uiStateStore;
 
     std::atomic<float>* currentSoloModulePtr;
+    std::atomic<float>* reverbBypassPtr;
+    std::atomic<float>* compressorBypassPtr;
+    std::atomic<float>* equalizerBypassPtr;
+
 
     void focusOnButton(int index, String modName);
 

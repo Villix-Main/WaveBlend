@@ -9,6 +9,7 @@
 */
 
 #include "CompressorModule.h"
+#include "WaveBlendColors.h"
 
 
 CompressorModule::CompressorModule(AudioProcessorValueTreeState& vts) :
@@ -21,7 +22,8 @@ CompressorModule::CompressorModule(AudioProcessorValueTreeState& vts) :
     mixSlider("Mix", 0, 100),
     outputSlider("Output", -15, 10)
 {
-    f.setHeight(15);
+    f.setHeight(17);
+    f.setBold(true);
 
     // Threshold Slider
     addAndMakeVisible(thresholdSlider);
@@ -62,6 +64,14 @@ CompressorModule::CompressorModule(AudioProcessorValueTreeState& vts) :
     outputAttachment.reset(new AudioProcessorValueTreeState::SliderAttachment(vts, "compressor_output", outputSlider));
 }
 
+void CompressorModule::paint(Graphics& g)
+{
+	g.setColour(WBColors::SecondaryLightGrey);
+
+	g.drawRoundedRectangle(sidechainRect.toFloat(), 10, 1);
+}
+
+
 void CompressorModule::resized()
 {
     const auto bounds = this->getLocalBounds();
@@ -72,7 +82,9 @@ void CompressorModule::resized()
     attackSlider.setBounds(240, 40, 85, 115);
     releaseSlider.setBounds(240, 197, 85, 115);
 
-    sidechainLabel.setBounds(390, 20, 143, 20);
+    sidechainRect.setBounds(362, 20, 200, 190);
+    sidechainLabel.setBounds(390, 27, 143, 20);
+	sidechainLabel.setColour(Label::textColourId, WBColors::MoreLightGrey);
     lowCutSidechainSlider.setBounds(390, 78, 55, 85);
     highCutSidechainSlider.setBounds(478, 78, 55, 85);
 

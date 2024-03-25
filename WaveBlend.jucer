@@ -43,6 +43,10 @@
                 file="Source/ReverbModule.cpp"/>
           <FILE id="XuV7c3" name="ReverbModule.h" compile="0" resource="0" file="Source/ReverbModule.h"/>
         </GROUP>
+        <FILE id="xB19Y0" name="BypassModuleLabel.cpp" compile="1" resource="0"
+              file="Source/BypassModuleLabel.cpp"/>
+        <FILE id="lBclhG" name="BypassModuleLabel.h" compile="0" resource="0"
+              file="Source/BypassModuleLabel.h"/>
         <FILE id="hdS95B" name="ModuleButton.cpp" compile="1" resource="0"
               file="Source/ModuleButton.cpp"/>
         <FILE id="JxzGY9" name="ModuleButton.h" compile="0" resource="0" file="Source/ModuleButton.h"/>

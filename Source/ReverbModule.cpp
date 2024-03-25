@@ -24,6 +24,7 @@ ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
 {
     f.setHeight(17);
     f.setBold(true);
+    
 
     // Decay Slider
     addAndMakeVisible(decaySlider);
@@ -62,7 +63,7 @@ ReverbModule::ReverbModule(AudioProcessorValueTreeState& vts) :
 
 void ReverbModule::paint(Graphics& g)
 {
-    g.setColour(WBColors::MoreLightGrey);
+    g.setColour(WBColors::SecondaryLightGrey);
 
     g.drawRoundedRectangle(eqRect.toFloat(), 10, 1);
 }
@@ -78,6 +79,7 @@ void ReverbModule::resized()
 
 	eqRect.setBounds(362, 20, 200, 190);
 	eqLabel.setBounds(390, 27, 143, 20);
+    eqLabel.setColour(Label::textColourId, WBColors::MoreLightGrey);
     lowCutSlider.setBounds(390, 78, 55, 85);
     highCutSlider.setBounds(478, 78, 55, 85);
 

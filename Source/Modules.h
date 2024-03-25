@@ -28,5 +28,6 @@ enum ModuleButtonAction
     Switch,
     Remove,
     Solo,
+    Bypass,
     None
 };

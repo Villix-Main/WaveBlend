@@ -15,6 +15,7 @@
 #include "SwitchModuleLabel.h"
 #include "Modules.h"
 #include "SoloModuleLabel.h"
+#include "BypassModuleLabel.h"
 
 class ModuleButton : public TextButton,
     public MouseListener,
@@ -54,6 +55,9 @@ private:
 
     // Label that will be used to solo a module in plugin
     SoloModuleLabel soloLabel;
+
+    // Label that will be used to bypass a module in plugin
+    BypassModuleLabel bypassLabel;
 
     // Enum to determine the action of the button labels
     ModuleButtonAction buttonAction;

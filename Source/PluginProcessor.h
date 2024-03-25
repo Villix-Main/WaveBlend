@@ -70,6 +70,9 @@ private:
     std::atomic<float>* compressorEnabledParamter = nullptr;
     std::atomic<float>* equalizerEnabledParamter = nullptr;
     std::atomic<float>* currentSoloModuleParameter = nullptr;
+    std::atomic<float>* reverbBypassParameter = nullptr;
+    std::atomic<float>* compressorBypassParameter = nullptr;
+    std::atomic<float>* equalizerBypassParameter = nullptr;
     std::atomic<float>* uiStateValue = nullptr;
     bool lastReverbEnableState = false;
 
@@ -116,6 +119,8 @@ private:
     dsp::DryWetMixer<float> reverbMixer;
     dsp::DryWetMixer<float> compressorMixer;
     
+    dsp::Gain<float> pluginGain;
+
     // Main limiter
     dsp::Limiter<float> finalLimiter;
 

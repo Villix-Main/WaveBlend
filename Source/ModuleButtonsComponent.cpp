@@ -27,6 +27,9 @@ ModuleButtonsComponent::ModuleButtonsComponent(AudioProcessorValueTreeState& vts
     currentModule.index = -1;
 
     currentSoloModulePtr = vts.getRawParameterValue("current_solo_module");
+    reverbBypassPtr = vts.getRawParameterValue("reverb_bypass");
+    compressorBypassPtr = vts.getRawParameterValue("compressor_bypass");
+    equalizerBypassPtr = vts.getRawParameterValue("equalizer_bypass");
  /* 
     if (currentState.getCurrentModules().size() > 0)
     {
@@ -320,6 +323,34 @@ void ModuleButtonsComponent::changeListenerCallback(ChangeBroadcaster* source)
             }
             moduleButtons[i]->setButtonAction(ModuleButtonAction::None);
 
+        }
+        else if (ba == ModuleButtonAction::Bypass)
+        {
+            String moduleName = moduleButtons[i]->getButtonText();
+
+
+			if (moduleName == Modules::Reverb)
+			{
+				if (reverbBypassPtr->load() == 1)
+					*reverbBypassPtr = 0;
+				else
+					*reverbBypassPtr = 1;
+			}
+			else if (moduleName == Modules::Compressor)
+			{
+				if (compressorBypassPtr->load() == 2)
+					*compressorBypassPtr = 0;
+				else
+					*compressorBypassPtr = 2;
+			}
+			else if (moduleName == Modules::Equalizer)
+			{
+				if (equalizerBypassPtr->load() == 3)
+					*equalizerBypassPtr = 0;
+				else
+					*equalizerBypassPtr = 3;
+			}
+			moduleButtons[i]->setButtonAction(ModuleButtonAction::None);
         }
     }
 }
