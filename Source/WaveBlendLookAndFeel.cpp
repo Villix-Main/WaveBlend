@@ -42,7 +42,7 @@ void WaveBlendLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int
     // Pointer Color
     g.setColour(juce::Colour(0xffC2C0C0));
     g.fillPath(p);
-
+    
     s.setColour(Slider::textBoxOutlineColourId, Colours::transparentWhite);
 }
 
@@ -55,7 +55,18 @@ void WaveBlendLookAndFeel::drawButtonBackground(Graphics& g, Button& button, con
     // Background color, checks for mouse clicks and hover
     float alpha = (shouldDrawButtonAsHighlighted || shouldDrawButtonAsDown) ? 0.8f : 1;
     int alphaHex = jmap(alpha, 0.f, 1.f, 0.f, 255.f);
-    g.setColour(Colour::fromRGBA(140, 162, 176, alphaHex));
+    //g.setColour(Colour::fromRGBA(140, 162, 176, alphaHex));
+
+	ColourGradient backgroundGradeint = ColourGradient{
+		Colour(0xff8ca2b0),
+		buttonArea.getTopLeft().toFloat(),
+		Colour(0xff8298a6),
+        buttonArea.getBottomRight().toFloat(),
+		false
+	};
+    g.setGradientFill(backgroundGradeint);
+    g.setOpacity(alpha);
+
     g.fillRoundedRectangle(buttonArea, 16);
 }
 
@@ -111,7 +122,7 @@ void WaveBlendLookAndFeel::positionComboBoxText(ComboBox& cb, Label& l)
 Font WaveBlendLookAndFeel::getLabelFont(Label& label)
 {
     Font sliderTextBoxFont;
-    sliderTextBoxFont.setHeight(12);
+    sliderTextBoxFont.setHeight(13);
 
     if (dynamic_cast<Slider*>(label.getParentComponent()))
         return sliderTextBoxFont;

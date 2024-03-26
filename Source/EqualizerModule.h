@@ -17,6 +17,7 @@ class EqualizerModule : public Component
 public:
     EqualizerModule(AudioProcessorValueTreeState& vts);
 
+    void paint(Graphics&) override;
     void resized() override;
 private:
     // Compressor Module Font

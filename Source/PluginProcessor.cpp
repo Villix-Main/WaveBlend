@@ -9,6 +9,80 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
+static AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
+{
+    auto percentFormat = [](float value, int) {
+        return String(value, 1) + " %";
+        };
+
+    AudioProcessorValueTreeState::ParameterLayout layout
+    {
+            /* UI State Parameters */
+            std::make_unique<AudioParameterBool>("reverb_enabled", "Reverb Enabled", false),
+            std::make_unique<AudioParameterBool>("compressor_enabled", "Compressor Enabled", false),
+            std::make_unique<AudioParameterBool>("equalizer_enabled", "Equalizer Enabled", false),
+            std::make_unique<AudioParameterFloat>("current_solo_module", "Current Solo Module",
+            NormalisableRange{0.f, 4.f, 1.f}, 0.f),
+            std::make_unique<AudioParameterBool>("reverb_bypass", "Reverb Bypass", false),
+            std::make_unique<AudioParameterBool>("compressor_bypass", "Compressor Bypass", false),
+            std::make_unique<AudioParameterBool>("equalizer_bypass", "Equalizer Bypass", false),
+            std::make_unique<AudioParameterFloat>("ui_state_value", "UI State Value",
+            NormalisableRange{0.f, 999999999.f, 1.f}, 0.f), 
+
+			/* Main Plugin Parameters */
+			std::make_unique<AudioParameterFloat>("plugin_output", "Output",
+			NormalisableRange{-20.f, 10.f, .05f}, 0.f),
+			std::make_unique<AudioParameterFloat>("plugin_mix", "Mix",
+			NormalisableRange{0.f, 100.f, .5f}, 100.f),
+
+
+			/* Reverb Module Parameters */
+			std::make_unique<AudioParameterFloat>("decay", "Decay",
+			NormalisableRange{0.2f, 15.f, 0.05f}, 2.f),
+			std::make_unique<AudioParameterFloat>("predelay", "Predelay",
+			NormalisableRange{0.f, 500.f, 1.f}, 0.f),
+			std::make_unique<AudioParameterFloat>("damping", "Damping",
+			NormalisableRange{0.f, 100.f, 1.f}, 0.f, String(), AudioProcessorParameter::genericParameter,
+            percentFormat, nullptr),
+			std::make_unique<AudioParameterFloat>("width", "width",
+			NormalisableRange{0.f, 100.f, 1.f}, 50.f),
+			std::make_unique<AudioParameterFloat>("reverb_lowcut_frequency", "Lowcut Frequency",
+			NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
+			std::make_unique<AudioParameterFloat>("reverb_highcut_frequency", "Highcut Frequency",
+			NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
+			std::make_unique<AudioParameterFloat>("reverb_mix", "Mix",
+			NormalisableRange{0.f, 100.f, 1.f}, 100.f),
+
+			/* Compressor Module Parameters */
+			std::make_unique<AudioParameterFloat>("threshold", "Threshold",
+			NormalisableRange{-25.f, 0.f, 0.05f}, -3.f),
+			std::make_unique<AudioParameterFloat>("ratio", "Ratio",
+			NormalisableRange{1.f, 30.f, 0.5f}, 2.f),
+			std::make_unique<AudioParameterFloat>("attack", "Attack",
+			NormalisableRange{5.f, 80.f, 0.5f}, 15.f),
+			std::make_unique<AudioParameterFloat>("release", "Release",
+			NormalisableRange{2.f, 500.f, 0.5f}, 50.f),
+			std::make_unique<AudioParameterFloat>("lowcut_sidechain", "Lowcut Frequency",
+			NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
+			std::make_unique<AudioParameterFloat>("highcut_sidechain", "Highcut Frequency",
+			NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
+			std::make_unique<AudioParameterFloat>("compressor_mix", "Mix",
+			NormalisableRange{0.f, 100.f, 1.f}, 100.f),
+			std::make_unique<AudioParameterFloat>("compressor_output", "Output",
+			NormalisableRange{-15.f, 10.f, 0.05f}, 0.f),
+
+			/* Equalizer Module Parameter */
+			std::make_unique<AudioParameterFloat>("equalizer_mix", "Mix",
+			NormalisableRange{0.f, 100.f, 1.f}, 100.f),
+			std::make_unique<AudioParameterFloat>("equalizer_output", "Output",
+			NormalisableRange{-15.f, 10.f, 0.05f}, 0.f)
+    };
+
+    return layout;
+}
+
+
 //==============================================================================
 WaveBlendAudioProcessor::WaveBlendAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -23,68 +97,7 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
 #else
     :
 #endif
-    parameters(*this, nullptr, Identifier("WaveBlend"),
-        {
-            /* UI State Parameters */
-            std::make_unique<AudioParameterBool>("reverb_enabled", "Reverb Enabled", false),
-            std::make_unique<AudioParameterBool>("compressor_enabled", "Compressor Enabled", false),
-            std::make_unique<AudioParameterBool>("equalizer_enabled", "Equalizer Enabled", false),
-            std::make_unique<AudioParameterFloat>("current_solo_module", "Current Solo Module", 
-            NormalisableRange{0.f, 4.f, 1.f}, 0.f),
-			std::make_unique<AudioParameterBool>("reverb_bypass", "Reverb Bypass", false),
-			std::make_unique<AudioParameterBool>("compressor_bypass", "Compressor Bypass", false),
-			std::make_unique<AudioParameterBool>("equalizer_bypass", "Equalizer Bypass", false),
-            std::make_unique<AudioParameterFloat>("ui_state_value", "UI State Value", 
-            NormalisableRange{0.f, 999999999.f, 1.f}, 0.f),
-
-            /* Main Plugin Parameters */
-            std::make_unique<AudioParameterFloat>("plugin_output", "Output",
-            NormalisableRange{-20.f, 10.f, .05f}, 0.f),
-            std::make_unique<AudioParameterFloat>("plugin_mix", "Mix",
-            NormalisableRange{0.f, 100.f, .5f}, 100.f),
-
-
-            /* Reverb Module Parameters */
-            std::make_unique<AudioParameterFloat>("decay", "Decay",
-            NormalisableRange{0.2f, 15.f, 0.05f}, 2.f),
-            std::make_unique<AudioParameterFloat>("predelay", "Predelay",
-            NormalisableRange{0.f, 500.f, 1.f}, 0.f),
-            std::make_unique<AudioParameterFloat>("damping", "Damping",
-            NormalisableRange{0.f, 100.f, 1.f}, 0.f),
-            std::make_unique<AudioParameterFloat>("width", "width",
-            NormalisableRange{0.f, 100.f, 1.f}, 50.f),
-            std::make_unique<AudioParameterFloat>("reverb_lowcut_frequency", "Lowcut Frequency",
-            NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
-            std::make_unique<AudioParameterFloat>("reverb_highcut_frequency", "Highcut Frequency",
-            NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
-            std::make_unique<AudioParameterFloat>("reverb_mix", "Mix",
-            NormalisableRange{0.f, 100.f, 1.f}, 100.f),
-
-            /* Compressor Module Parameters */
-            std::make_unique<AudioParameterFloat>("threshold", "Threshold",
-            NormalisableRange{-25.f, 0.f, 0.05f}, -3.f),
-            std::make_unique<AudioParameterFloat>("ratio", "Ratio",
-            NormalisableRange{1.f, 30.f, 0.5f}, 2.f),
-            std::make_unique<AudioParameterFloat>("attack", "Attack",
-            NormalisableRange{5.f, 80.f, 0.5f}, 15.f),
-            std::make_unique<AudioParameterFloat>("release", "Release",
-            NormalisableRange{2.f, 500.f, 0.5f}, 50.f),
-            std::make_unique<AudioParameterFloat>("lowcut_sidechain", "Lowcut Frequency",
-            NormalisableRange{20.f, 2000.f, 1.f, 0.2f, false}, 20.f),
-            std::make_unique<AudioParameterFloat>("highcut_sidechain", "Highcut Frequency",
-            NormalisableRange{200.f, 20000.f, 1.f, 0.2f, false}, 20000.f),
-            std::make_unique<AudioParameterFloat>("compressor_mix", "Mix",
-            NormalisableRange{0.f, 100.f, 1.f}, 100.f),
-            std::make_unique<AudioParameterFloat>("compressor_output", "Output",
-            NormalisableRange{-15.f, 10.f, 0.05f}, 0.f),
-
-            /* Equalizer Module Parameter */
-            std::make_unique<AudioParameterFloat>("equalizer_mix", "Mix",
-            NormalisableRange{0.f, 100.f, 1.f}, 100.f),
-            std::make_unique<AudioParameterFloat>("equalizer_output", "Output",
-            NormalisableRange{-15.f, 10.f, 0.05f}, 0.f)
-
-        })
+    parameters(*this, nullptr, Identifier("WaveBlend"), createParameterLayout())
 {
         // UI State
         reverbEnabledParamter = parameters.getRawParameterValue("reverb_enabled");
