@@ -39,6 +39,8 @@
                 file="Source/EqualizerModule.cpp"/>
           <FILE id="r6xGSm" name="EqualizerModule.h" compile="0" resource="0"
                 file="Source/EqualizerModule.h"/>
+          <FILE id="yqBtjK" name="EqualizerModuleNoAnalzyer.cpp" compile="1"
+                resource="0" file="Source/EqualizerModuleNoAnalzyer.cpp"/>
           <FILE id="CzdAkw" name="ReverbModule.cpp" compile="1" resource="0"
                 file="Source/ReverbModule.cpp"/>
           <FILE id="XuV7c3" name="ReverbModule.h" compile="0" resource="0" file="Source/ReverbModule.h"/>

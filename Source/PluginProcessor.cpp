@@ -70,7 +70,7 @@ static AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 			std::make_unique<AudioParameterFloat>("compressor_mix", "Mix",
 			NormalisableRange{0.f, 100.f, 1.f}, 100.f),
 			std::make_unique<AudioParameterFloat>("compressor_output", "Output",
-			NormalisableRange{-15.f, 10.f, 0.05f}, 0.f),
+			NormalisableRange{-25.f, 20.f, 0.05f}, 0.f),
 
 			/* Equalizer Module Parameter */
 			std::make_unique<AudioParameterFloat>("equalizer_mix", "Mix",
@@ -220,17 +220,19 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     reverb.prepare(spec);
     compressor.prepare(spec);
+
     pluginMixer.prepare(spec);
     reverbMixer.prepare(spec);
     compressorMixer.prepare(spec);
+    
     finalLimiter.prepare(spec);
-
     finalLimiter.setRelease(50);
     finalLimiter.setThreshold(-0.03);
 
     reverbLowPassFilter.setSampleRate(sampleRate);
     reverbHighPassFilter.setSampleRate(sampleRate);
 
+    compressorGain.prepare(spec);
     pluginGain.prepare(spec);
 
     parameters.addParameterListener("reverb_enabled", this);
@@ -382,6 +384,9 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     if (compressorEnabledParamter->load() && !compressorBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 2))
     {
         compressor.process(compressorCtx);
+
+        compressorGain.setGainDecibels(compressorOutputParameter->load());
+        compressorGain.process(compressorCtx);
 
         compressorMixer.pushDrySamples(compressorCtx.getOutputBlock());
         compressorMixer.setWetMixProportion(1.f - (compressorMixParameter->load() * 0.01));

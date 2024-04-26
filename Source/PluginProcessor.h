@@ -119,6 +119,8 @@ private:
     dsp::DryWetMixer<float> reverbMixer;
     dsp::DryWetMixer<float> compressorMixer;
     
+    // Output Gain
+    dsp::Gain<float> compressorGain;
     dsp::Gain<float> pluginGain;
 
     // Main limiter

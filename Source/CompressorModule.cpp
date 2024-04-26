@@ -20,7 +20,7 @@ CompressorModule::CompressorModule(AudioProcessorValueTreeState& vts) :
     lowCutSidechainSlider("Low Cut", 20, 2000),
     highCutSidechainSlider("High Cut", 200, 20000),
     mixSlider("Mix", 0, 100),
-    outputSlider("Output", -15, 10)
+    outputSlider("Output", -25, 20)
 {
     f.setHeight(17);
     f.setBold(true);
