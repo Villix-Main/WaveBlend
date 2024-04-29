@@ -100,8 +100,21 @@ private:
     std::atomic<float>* compressorOutputParameter = nullptr;
 
     // Equalizer Module Parameters
+    std::atomic<float>* hzSubParameter = nullptr;
+    std::atomic<float>* hz40Parameter = nullptr;
+    std::atomic<float>* hz160Parameter = nullptr;
+    std::atomic<float>* hz650Parameter = nullptr;
+    std::atomic<float>* hz2500Parameter = nullptr;
+    std::atomic<float>* airGainParameter = nullptr;
+    std::atomic<float>* airBandParameter = nullptr;
     std::atomic<float>* equalizerMixParameter = nullptr;
     std::atomic<float>* equalizerOutputParameter = nullptr;
+
+    dsp::IIR::Coefficients<float>::Ptr currentBandCoefficent;
+    //dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> filter;
+
+    using FilterBand = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
+    dsp::ProcessorChain<FilterBand, FilterBand, FilterBand, FilterBand, FilterBand> filter;
 
     AudioSampleBuffer wBuffer;
 
@@ -118,6 +131,7 @@ private:
     dsp::DryWetMixer<float> pluginMixer;
     dsp::DryWetMixer<float> reverbMixer;
     dsp::DryWetMixer<float> compressorMixer;
+    dsp::DryWetMixer<float> equalizerMixer;
     
     // Output Gain
     dsp::Gain<float> compressorGain;
@@ -125,6 +139,9 @@ private:
 
     // Main limiter
     dsp::Limiter<float> finalLimiter;
+
+    // Sample rate
+    double sampleRate;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveBlendAudioProcessor)

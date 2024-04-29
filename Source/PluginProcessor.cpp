@@ -73,6 +73,20 @@ static AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 			NormalisableRange{-25.f, 20.f, 0.05f}, 0.f),
 
 			/* Equalizer Module Parameter */
+			std::make_unique<AudioParameterFloat>("equalizer_sub_hz", "Equalizer Sub Hz",
+			NormalisableRange{-5.f, 5.f, .05f}, 5.f),
+			std::make_unique<AudioParameterFloat>("equalizer_40_hz", "Equalizer 40 Hz",
+			NormalisableRange{-5.f, 5.f, .05f}, 0.f),
+			std::make_unique<AudioParameterFloat>("equalizer_160_hz", "Equalizer 160 Hz",
+			NormalisableRange{-5.f, 5.f, .05f}, 0.f),
+			std::make_unique<AudioParameterFloat>("equalizer_650_hz", "Equalizer 650 Hz",
+			NormalisableRange{-5.f, 5.f, .05f}, 0.f),
+			std::make_unique<AudioParameterFloat>("equalizer_2500_hz", "Equalizer 2500 Hz",
+			NormalisableRange{-5.f, 5.f, .05f}, 0.f),
+			std::make_unique<AudioParameterFloat>("equalizer_air_gain", "Equalizer Air Gain",
+			NormalisableRange{0.f, 10.f, .1f}, 0.f),
+			std::make_unique<AudioParameterFloat>("equalizer_air_band", "Equalizer Air Band",
+			NormalisableRange{0.f, 40.f, .1f},2.5f),
 			std::make_unique<AudioParameterFloat>("equalizer_mix", "Mix",
 			NormalisableRange{0.f, 100.f, 1.f}, 100.f),
 			std::make_unique<AudioParameterFloat>("equalizer_output", "Output",
@@ -135,6 +149,13 @@ WaveBlendAudioProcessor::WaveBlendAudioProcessor()
         compressorOutputParameter = parameters.getRawParameterValue("compressor_output");
 
         // Equalizer Parameters
+        hzSubParameter = parameters.getRawParameterValue("equalizer_sub_hz");
+        hz40Parameter = parameters.getRawParameterValue("equalizer_40_hz");
+        hz160Parameter = parameters.getRawParameterValue("equalizer_160_hz");
+        hz650Parameter = parameters.getRawParameterValue("equalizer_650_hz");
+        hz2500Parameter = parameters.getRawParameterValue("equalizer_2500_hz");
+        airGainParameter = parameters.getRawParameterValue("equalizer_air_gain");
+        airBandParameter = parameters.getRawParameterValue("equalizer_air_band");
         equalizerMixParameter = parameters.getRawParameterValue("equalizer_mix");
         equalizerOutputParameter = parameters.getRawParameterValue("equalizer_output");
 }
@@ -213,6 +234,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     // initialisation that you need..
 
     dsp::ProcessSpec spec;
+    this->sampleRate = sampleRate;
 
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
@@ -224,6 +246,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     pluginMixer.prepare(spec);
     reverbMixer.prepare(spec);
     compressorMixer.prepare(spec);
+    equalizerMixer.prepare(spec);
     
     finalLimiter.prepare(spec);
     finalLimiter.setRelease(50);
@@ -235,6 +258,9 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     compressorGain.prepare(spec);
     pluginGain.prepare(spec);
 
+    filter.prepare(spec);
+
+    // Plugin State parameter listeners
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
     parameters.addParameterListener("equalizer_enabled", this);
@@ -244,6 +270,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("equalizer_bypass", this);
     parameters.addParameterListener("ui_state_value", this);
 
+    // Reverb parameter listeners
     parameters.addParameterListener("decay", this);
     parameters.addParameterListener("predelay", this);
     parameters.addParameterListener("damping", this);
@@ -252,6 +279,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("reverb_highcut_frequency", this);
     parameters.addParameterListener("reverb_mix", this);
 
+    // Compressor parameter listeners
     parameters.addParameterListener("threshold", this);
     parameters.addParameterListener("ratio", this);
     parameters.addParameterListener("attack", this);
@@ -260,6 +288,16 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     parameters.addParameterListener("highcut_sidechain", this);
     parameters.addParameterListener("compressor_mix", this);
     parameters.addParameterListener("compressor_output", this);
+
+    // Equalizer parameter listeners
+	parameters.addParameterListener("equalizer_sub_hz", this);
+	parameters.addParameterListener("equalizer_40_hz", this);
+	parameters.addParameterListener("equalizer_160_hz", this);
+	parameters.addParameterListener("equalizer_650_hz", this);
+	parameters.addParameterListener("equalizer_2500_hz", this);
+	parameters.addParameterListener("equalizer_air_gain", this);
+	parameters.addParameterListener("equalizer_air_band", this);
+
 
     //*reverbEnabledParamter = lastReverbEnableState;   
     setReverbParams();
@@ -300,10 +338,32 @@ bool WaveBlendAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 
 void WaveBlendAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    if (parameterID.contains("enabled"))
+    if (parameterID.contains("equalizer_sub_hz"))
     {
-
+        currentBandCoefficent = dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 20, 1.1, 0);
+        filter.get<0>().state = currentBandCoefficent;
     }
+    /*else if (parameterID.contains("equalizer_40_hz"))
+    {
+        currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 40, 1.1, 10);
+		filter.get<1>().state = currentBandCoefficent;
+    }
+    else if (parameterID.contains("equalizer_160_hz"))
+    {
+        currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 160, 1.1, 0);
+        filter.get<2>().state = currentBandCoefficent;
+    }
+	else if (parameterID.contains("equalizer_650_hz"))
+	{
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 650, 1.1, 0);
+        filter.get<3>().state = currentBandCoefficent;
+	}
+	else if (parameterID.contains("equalizer_2500_hz"))
+	{
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 2500, 1.1, 0);
+        filter.get<4>().state = currentBandCoefficent;
+	}*/
+
 
     setReverbParams();
 
@@ -388,6 +448,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         compressorGain.setGainDecibels(compressorOutputParameter->load());
         compressorGain.process(compressorCtx);
 
+
         compressorMixer.pushDrySamples(compressorCtx.getOutputBlock());
         compressorMixer.setWetMixProportion(1.f - (compressorMixParameter->load() * 0.01));
         compressorMixer.setWetLatency(getLatencySamples());
@@ -395,6 +456,23 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         compressorMixer.mixWetSamples(wetCtx.getOutputBlock());    
     }
 
+    AudioBuffer<float> equalizerBuff;
+    equalizerBuff.makeCopyOf(wetBuff, false);
+
+    dsp::AudioBlock<float> equalizerBlock(equalizerBuff);
+    dsp::ProcessContextReplacing<float> equalizerCtx(equalizerBlock);
+
+    if (equalizerEnabledParamter->load() && !equalizerBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 3))
+    {
+        filter.process(equalizerCtx);
+
+        equalizerMixer.pushDrySamples(equalizerCtx.getOutputBlock());
+        equalizerMixer.setWetMixProportion(1.f - (equalizerMixParameter->load() * 0.01));
+        equalizerMixer.setWetLatency(getLatencySamples());
+        equalizerMixer.setMixingRule(dsp::DryWetMixingRule::balanced);
+        equalizerMixer.mixWetSamples(wetCtx.getOutputBlock());
+
+    }
 
     pluginMixer.pushDrySamples(wetCtx.getOutputBlock());
     pluginMixer.setWetMixProportion(1.f - (pluginMixParameter->load() * 0.01));
@@ -402,7 +480,6 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     pluginMixer.setMixingRule(dsp::DryWetMixingRule::linear);
     pluginMixer.mixWetSamples(dryCtx.getOutputBlock());
         
-
     
     /*filter.setCutoffFrequency(500);
     filter.processBlock(buffer, midiMessages);*/

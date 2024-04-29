@@ -94,7 +94,10 @@ void ModuleManager::setCurrentModule(String mod)
         *compressorEnabledPtr = 1;
     }
     else if (mod == Modules::Equalizer)
+    {
         currentModule = std::make_unique<EqualizerModule>(vts);
+        *equalizerEnabledPtr = 1;
+    }
 
 
     previousModuleName = currentModuleName;
