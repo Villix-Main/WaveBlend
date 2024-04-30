@@ -113,6 +113,8 @@ private:
     dsp::IIR::Coefficients<float>::Ptr currentBandCoefficent;
     //dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> filter;
 
+    //dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> filter1;
+
     using FilterBand = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     dsp::ProcessorChain<FilterBand, FilterBand, FilterBand, FilterBand, FilterBand> filter;
 

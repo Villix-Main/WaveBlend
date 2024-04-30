@@ -260,6 +260,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     filter.prepare(spec);
 
+
     // Plugin State parameter listeners
     parameters.addParameterListener("reverb_enabled", this);
     parameters.addParameterListener("compressor_enabled", this);
@@ -338,31 +339,31 @@ bool WaveBlendAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 
 void WaveBlendAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    if (parameterID.contains("equalizer_sub_hz"))
-    {
-        currentBandCoefficent = dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 20, 1.1, 0);
-        filter.get<0>().state = currentBandCoefficent;
-    }
-    /*else if (parameterID.contains("equalizer_40_hz"))
-    {
-        currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 40, 1.1, 10);
-		filter.get<1>().state = currentBandCoefficent;
-    }
-    else if (parameterID.contains("equalizer_160_hz"))
-    {
-        currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 160, 1.1, 0);
-        filter.get<2>().state = currentBandCoefficent;
-    }
+	if (parameterID.contains("equalizer_sub_hz"))
+	{
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 20, 1.1, 0);
+		*filter.get<0>().state = *currentBandCoefficent;
+	}
+	else if (parameterID.contains("equalizer_40_hz"))
+	{
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 40, 1.1, 10);
+		*filter.get<1>().state = *currentBandCoefficent;
+	}
+	else if (parameterID.contains("equalizer_160_hz"))
+	{
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 160, 1.1, 0);
+		*filter.get<2>().state = *currentBandCoefficent;
+	}
 	else if (parameterID.contains("equalizer_650_hz"))
 	{
 		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 650, 1.1, 0);
-        filter.get<3>().state = currentBandCoefficent;
+		*filter.get<3>().state = *currentBandCoefficent;
 	}
 	else if (parameterID.contains("equalizer_2500_hz"))
 	{
 		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 2500, 1.1, 0);
-        filter.get<4>().state = currentBandCoefficent;
-	}*/
+		*filter.get<4>().state = *currentBandCoefficent;
+	}
 
 
     setReverbParams();
@@ -428,6 +429,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         reverbHighPassFilter.setCutoffFrequency(reverbLowCutParamater->load());
         reverbHighPassFilter.processBlock(revBuff, midiMessages, true);
         
+
 		reverbMixer.pushDrySamples(revCtx.getOutputBlock());
 		reverbMixer.setWetMixProportion(1.f - (reverbMixParamater->load() * 0.01));
 		reverbMixer.setWetLatency(getLatencySamples());
@@ -447,7 +449,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
         compressorGain.setGainDecibels(compressorOutputParameter->load());
         compressorGain.process(compressorCtx);
-
+        
 
         compressorMixer.pushDrySamples(compressorCtx.getOutputBlock());
         compressorMixer.setWetMixProportion(1.f - (compressorMixParameter->load() * 0.01));
@@ -456,23 +458,23 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         compressorMixer.mixWetSamples(wetCtx.getOutputBlock());    
     }
 
-    AudioBuffer<float> equalizerBuff;
-    equalizerBuff.makeCopyOf(wetBuff, false);
+	AudioBuffer<float> equalizerBuff;
+	equalizerBuff.makeCopyOf(wetBuff, false);
 
-    dsp::AudioBlock<float> equalizerBlock(equalizerBuff);
-    dsp::ProcessContextReplacing<float> equalizerCtx(equalizerBlock);
+	dsp::AudioBlock<float> equalizerBlock(equalizerBuff);
+	dsp::ProcessContextReplacing<float> equalizerCtx(equalizerBlock);
 
-    if (equalizerEnabledParamter->load() && !equalizerBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 3))
-    {
-        filter.process(equalizerCtx);
+	if (equalizerEnabledParamter->load() && !equalizerBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 3))
+	{
+		filter.process(equalizerCtx);
 
-        equalizerMixer.pushDrySamples(equalizerCtx.getOutputBlock());
-        equalizerMixer.setWetMixProportion(1.f - (equalizerMixParameter->load() * 0.01));
-        equalizerMixer.setWetLatency(getLatencySamples());
-        equalizerMixer.setMixingRule(dsp::DryWetMixingRule::balanced);
-        equalizerMixer.mixWetSamples(wetCtx.getOutputBlock());
+		equalizerMixer.pushDrySamples(equalizerCtx.getOutputBlock());
+		equalizerMixer.setWetMixProportion(1.f - (equalizerMixParameter->load() * 0.01));
+		equalizerMixer.setWetLatency(getLatencySamples());
+		equalizerMixer.setMixingRule(dsp::DryWetMixingRule::balanced);
+		equalizerMixer.mixWetSamples(wetCtx.getOutputBlock());
 
-    }
+	}
 
     pluginMixer.pushDrySamples(wetCtx.getOutputBlock());
     pluginMixer.setWetMixProportion(1.f - (pluginMixParameter->load() * 0.01));
