@@ -74,7 +74,7 @@ static AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 
 			/* Equalizer Module Parameter */
 			std::make_unique<AudioParameterFloat>("equalizer_sub_hz", "Equalizer Sub Hz",
-			NormalisableRange{-5.f, 5.f, .05f}, 5.f),
+			NormalisableRange{-5.f, 5.f, .05f}, 0.f),
 			std::make_unique<AudioParameterFloat>("equalizer_40_hz", "Equalizer 40 Hz",
 			NormalisableRange{-5.f, 5.f, .05f}, 0.f),
 			std::make_unique<AudioParameterFloat>("equalizer_160_hz", "Equalizer 160 Hz",
@@ -86,7 +86,7 @@ static AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 			std::make_unique<AudioParameterFloat>("equalizer_air_gain", "Equalizer Air Gain",
 			NormalisableRange{0.f, 10.f, .1f}, 0.f),
 			std::make_unique<AudioParameterFloat>("equalizer_air_band", "Equalizer Air Band",
-			NormalisableRange{0.f, 40.f, .1f},2.5f),
+			NormalisableRange{2.5f, 21.f, .1f},2.5f),
 			std::make_unique<AudioParameterFloat>("equalizer_mix", "Mix",
 			NormalisableRange{0.f, 100.f, 1.f}, 100.f),
 			std::make_unique<AudioParameterFloat>("equalizer_output", "Output",
@@ -251,7 +251,7 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     finalLimiter.prepare(spec);
     finalLimiter.setRelease(50);
     finalLimiter.setThreshold(-0.03);
-
+    
     reverbLowPassFilter.setSampleRate(sampleRate);
     reverbHighPassFilter.setSampleRate(sampleRate);
 
@@ -302,6 +302,19 @@ void WaveBlendAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     //*reverbEnabledParamter = lastReverbEnableState;   
     setReverbParams();
+
+	currentBandCoefficent = dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 20, 1.1, 1.0);
+	*filter.get<0>().state = *currentBandCoefficent;
+	currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 40, 1.1, 1.0);
+	*filter.get<1>().state = *currentBandCoefficent;
+	currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 160, 1.1, 1.0);
+	*filter.get<2>().state = *currentBandCoefficent;
+	currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 650, 1.1, 1.0);
+	*filter.get<3>().state = *currentBandCoefficent;
+	currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 2500, 1.1, 1.0);
+	*filter.get<4>().state = *currentBandCoefficent;
+	currentBandCoefficent = dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 2500, 1.1, 1.0);
+	*filter.get<5>().state = *currentBandCoefficent;
 }
 
 void WaveBlendAudioProcessor::releaseResources()
@@ -341,36 +354,51 @@ void WaveBlendAudioProcessor::parameterChanged(const String& parameterID, float 
 {
 	if (parameterID.contains("equalizer_sub_hz"))
 	{
-		currentBandCoefficent = dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 20, 1.1, 0);
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 20, 1.1, 1 + convertToGainFactor(newValue));
 		*filter.get<0>().state = *currentBandCoefficent;
 	}
 	else if (parameterID.contains("equalizer_40_hz"))
 	{
-		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 40, 1.1, 10);
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 40, 1.1, 1 + convertToGainFactor(newValue));
 		*filter.get<1>().state = *currentBandCoefficent;
 	}
 	else if (parameterID.contains("equalizer_160_hz"))
 	{
-		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 160, 1.1, 0);
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 160, 1.1, 1 + convertToGainFactor(newValue));
 		*filter.get<2>().state = *currentBandCoefficent;
 	}
 	else if (parameterID.contains("equalizer_650_hz"))
 	{
-		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 650, 1.1, 0);
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 650, 1.1, 1 + convertToGainFactor(newValue));
 		*filter.get<3>().state = *currentBandCoefficent;
 	}
 	else if (parameterID.contains("equalizer_2500_hz"))
 	{
-		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 2500, 1.1, 0);
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 2500, 1.1, 1 + convertToGainFactor(newValue));
 		*filter.get<4>().state = *currentBandCoefficent;
+	}
+    else if (parameterID.contains("equalizer_air_gain") || parameterID.contains("equalizer_air_band"))
+	{
+		float cutoffFreq = airBandParameter->load() * 1000;
+        float gainFactor = airGainParameter->load() * 0.09f;
+		currentBandCoefficent = dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, cutoffFreq, 1.1, 1 + gainFactor);
+		*filter.get<5>().state = *currentBandCoefficent;
 	}
 
 
-    setReverbParams();
+	setReverbParams();
 
-    setCompressorParams();
+	setCompressorParams();
 
 }
+float WaveBlendAudioProcessor::convertToGainFactor(float gain)
+{
+	if (gain < 0)
+		return gain * 0.09f;
+    else
+        return gain * .15f;
+}
+
 
 void WaveBlendAudioProcessor::setReverbParams()
 {
@@ -486,7 +514,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     /*filter.setCutoffFrequency(500);
     filter.processBlock(buffer, midiMessages);*/
 
-    pluginGain.setGainDecibels(pluginOutputParameter->load());
+    pluginGain.setGainDecibels(pluginOutputParameter->load() - 3.9);
     pluginGain.process(dryCtx);
     
 

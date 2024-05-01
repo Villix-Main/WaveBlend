@@ -21,7 +21,7 @@ EqualizerModule::EqualizerModule(AudioProcessorValueTreeState& vts) :
     hz650Slider("650 Hz", -5, 5),
     hz2500Slider("2.5 kHz", -5, 5),
     airGainSlider("Air Gain", 0, 10),
-    airBandSlider("Air Band", 2.5, 40)
+    airBandSlider("Air Band", 2.5, 21)
 {
     f.setHeight(15);
 

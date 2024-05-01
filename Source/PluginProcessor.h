@@ -63,6 +63,7 @@ private:
     void parameterChanged(const String& parameterID, float newValue);
     void setReverbParams();
     void setCompressorParams();
+    float convertToGainFactor(float gain);
     
     // Current UIState of plugin
     UIState currentState;
@@ -116,7 +117,7 @@ private:
     //dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> filter1;
 
     using FilterBand = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
-    dsp::ProcessorChain<FilterBand, FilterBand, FilterBand, FilterBand, FilterBand> filter;
+    dsp::ProcessorChain<FilterBand, FilterBand, FilterBand, FilterBand, FilterBand, FilterBand> filter;
 
     AudioSampleBuffer wBuffer;
 
