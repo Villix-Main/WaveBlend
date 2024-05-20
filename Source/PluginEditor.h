@@ -14,6 +14,7 @@
 #include "ModuleButtonsComponent.h"
 #include "ReverbModule.h"
 #include "ModuleManager.h"
+#include "PresetManager.h"
 
 
 
@@ -152,6 +153,7 @@ private:
     WaveBlendAudioProcessor& audioProcessor;
 
     void parameterChanged(const String& parameterID, float newValue);
+    void presetMenuChanged();
 
     // Look And Feel of Plugin
     WaveBlendLookAndFeel lookAndFeel;
@@ -176,14 +178,11 @@ private:
     // Plugin Preset Dropdown Menu
     ComboBox pluginPresetMenu;
     
-    // Add Module Button
-	//TextButton addModule;
-
-    std::atomic<float>* idk = nullptr;
     
     ModuleButtonsComponent moduleButtons;
 
     ModuleManager moduleManager;
+    PresetManager presetManager;
 
     XMLReader stateXMLReader;
     UIStateStore uiStateStore;

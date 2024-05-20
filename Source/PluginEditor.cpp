@@ -15,6 +15,7 @@
 WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProcessor& p, AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor(&p), audioProcessor(p),
     moduleManager(vts),
+    presetManager(vts),
     outputSlider("Output", -20.f, 10.f, 12),
     mixSlider("Mix", 0.f, 100.f, 12),
     moduleButtons(vts),
@@ -42,17 +43,9 @@ WaveBlendAudioProcessorEditor::WaveBlendAudioProcessorEditor(WaveBlendAudioProce
     pluginPresetMenu.addItem("Piano", 3);
     pluginPresetMenu.addItem("Clean Vocals", 4);
     pluginPresetMenu.addItem("Flute", 5);
-
-    addAndMakeVisible(moduleManager);
+    pluginPresetMenu.onChange = [this] { presetMenuChanged(); };
     
-    //addAndMakeVisible(rm);
-
-    idk = vts.getRawParameterValue("ui_state_value");
-
-    // Add Module Button
-	/*addAndMakeVisible(addModule);
-	lookAndFeel.setButtonFontHeight(40);
-	addModule.setButtonText("+");*/
+    addAndMakeVisible(moduleManager);
     
     addAndMakeVisible(moduleButtons);
     moduleButtons.addChangeListener(this);
@@ -84,7 +77,15 @@ void WaveBlendAudioProcessorEditor::parameterChanged(const String& parameterID, 
     
     moduleButtons.renderFromState(uiStateStore.loadState());
 }
-    
+
+void WaveBlendAudioProcessorEditor::presetMenuChanged()
+{
+	/*switch (pluginPresetMenu.getSelectedId())
+	{
+
+	}*/
+    presetManager.loadPreset("drum_room");
+}
 
 //==============================================================================
 void WaveBlendAudioProcessorEditor::paint (juce::Graphics& g)
