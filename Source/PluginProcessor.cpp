@@ -445,6 +445,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     dsp::ProcessContextReplacing<float> dryCtx(dryBlock);
     
     int currentSoloModule = currentSoloModuleParameter->load();
+    // Processor the reverb first if its currently enabled and opened
     if (reverbEnabledParamter->load() && !reverbBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 1))
     {
         reverb.setParameters(revParams);
@@ -471,6 +472,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 	dsp::AudioBlock<float> compressorBlock(compressorBuff);
 	dsp::ProcessContextReplacing<float> compressorCtx(compressorBlock);
 
+    // Then process the compressor if its enabled and opened
     if (compressorEnabledParamter->load() && !compressorBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 2))
     {
         compressor.process(compressorCtx);
@@ -492,6 +494,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 	dsp::AudioBlock<float> equalizerBlock(equalizerBuff);
 	dsp::ProcessContextReplacing<float> equalizerCtx(equalizerBlock);
 
+    // Then finally the equalizer if its opened and enabled
 	if (equalizerEnabledParamter->load() && !equalizerBypassParameter->load() && (currentSoloModule == 0 || currentSoloModule == 3))
 	{
 		filter.process(equalizerCtx);
@@ -504,6 +507,7 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
 	}
 
+    // Process the mixing of the orignal signal and the plugin signal together
     pluginMixer.pushDrySamples(wetCtx.getOutputBlock());
     pluginMixer.setWetMixProportion(1.f - (pluginMixParameter->load() * 0.01));
     pluginMixer.setWetLatency(getLatencySamples());
@@ -514,10 +518,11 @@ void WaveBlendAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     /*filter.setCutoffFrequency(500);
     filter.processBlock(buffer, midiMessages);*/
 
+    // Set final gain
     pluginGain.setGainDecibels(pluginOutputParameter->load() - 3.9);
     pluginGain.process(dryCtx);
     
-
+    // Add a limiter to make sure final gain does not exceed the ceiling
     finalLimiter.process(dryCtx);
     /*
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
